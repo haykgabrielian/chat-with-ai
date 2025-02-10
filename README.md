@@ -53,3 +53,7 @@ Ensure you have the following installed:
 
 ## 📜 Challenges
 The biggest challenge was that the Gemini API does not remember the context of previous interactions, requiring me to pass previous messages every time a new message is sent.
+
+## 🖼️ Screenshots
+
+![Chatbot UI](screenshots/screenshot_1.png)
