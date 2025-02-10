@@ -1,50 +1,55 @@
-# React + TypeScript + Vite
+# chat-with-ai Application (Powered by Gemini API)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📌 Project Overview
+This application is a chatbot similar to ChatGPT, integrated with the **Gemini API** for AI-powered conversations. It is built using **React, Vite, TypeScript**, and **IndexedDB** for local data storage.
 
-Currently, two official plugins are available:
+## 🚀 Setup Instructions
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 1️⃣ Prerequisites
+Ensure you have the following installed:
+- **Node.js** (v18 or later)
+- **npm** or **yarn** (package manager)
+- A **Google Gemini API key**
 
-## Expanding the ESLint configuration
+### 2️⃣ Installation Steps
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Clone the repository:
+   ```sh
+   git clone <repo-url>
+   cd chat-with-ai
+   ```
 
-- Configure the top-level `parserOptions` property like this:
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+3. Start the development server:
+   ```sh
+   npm run dev
+   ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## 🛠️ Technologies Used & Reasons
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+| **Technology**      | **Purpose** |
+|---------------------|------------|
+| **React**           | Component-based UI development for scalability. |
+| **Vite**            | Fast build tool, optimized for modern JavaScript frameworks. |
+| **TypeScript**      | Provides type safety and better code maintainability. |
+| **IndexedDB**       | Client-side database for storing chat history and improving offline functionality. |
+| **Styled Compnent** | Styled Compnent for UI development. |
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+
+## ⏳ Time Spent on the Task
+
+| **Task**                                      | **Estimated Time** |
+|-----------------------------------------------|--------------------|
+| **Project setup & configuration**             | 2-3 hours          |
+| **UI design & development**                   | 4 hours            |
+| **Gemini API integration and testing** | 3 hours            |
+| **IndexedDB setup & testing**                 | 1 hours            |
+| **Bug fixing & optimizations**                | 2 hours            |
+| **Documentation & final touches**             | 1 hour             |
+
+## 📜 Challenges
+The biggest challenge was that the Gemini API does not remember the context of previous interactions, requiring me to pass previous messages every time a new message is sent.
