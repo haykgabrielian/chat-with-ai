@@ -16,7 +16,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "typeRoots": ["node_modules/@types", "node_modules/styled-components"]
+    "typeRoots": ["node_modules/@types"],
+    "types": ["node", "styled-components"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

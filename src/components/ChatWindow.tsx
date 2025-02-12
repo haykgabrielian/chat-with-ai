@@ -46,28 +46,13 @@ const MessagesContent = styled.div`
 
 const Message = styled.div<{ isSentByMe: boolean }>`
     width: max-content;
-    max-width: 600px;
+    max-width: 550px;
     background-color: ${(props) => (props.isSentByMe ? "#0084ff" : "#4e4e4e")};
     color: #cfcfcf;
     margin-left: ${(props) => (props.isSentByMe ? "auto" : "unset")};
     text-align: left;
     border-radius: 20px;
     padding: 8px;
-`;
-
-const Table = styled.table`
-    width: 100%;
-    border-collapse: collapse;
-    margin: 8px 0;
-    color: #cfcfcf;
-    th, td {
-        border: 1px solid #cfcfcf;
-        padding: 8px;
-        text-align: left;
-    }
-    th {
-        background-color: #636363;
-    }
 `;
 
 const NoMessage = styled.div`

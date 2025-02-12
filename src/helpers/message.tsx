@@ -7,11 +7,13 @@ const Table = styled.table`
     border-collapse: collapse;
     margin: 8px 0;
     color: #cfcfcf;
+
     th, td {
         border: 1px solid #cfcfcf;
         padding: 8px;
         text-align: left;
     }
+
     th {
         background-color: #636363;
     }
@@ -22,38 +24,121 @@ const List = styled.div`
     line-height: 1.6;
 `;
 
+const formatText = (text: string) => {
+    return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+};
+
 export const renderMessage = (text: string) => {
-    if (text.includes("```")) {
-        const parts = text.split("```");
-        return (
-            <div>
-                {parts.map((part, index) => {
-                    if (index % 2 === 1) {
-                        return (
-                            <pre key={index} style={{ backgroundColor: "#656565", padding: "10px", borderRadius: "10px" }}>
-                                <code>{part.trim()}</code>
-                            </pre>
-                        );
-                    } else {
-                        return <span key={index}>{part}</span>;
-                    }
-                })}
-            </div>
-        );
+    const formattedText = formatText(text);
+
+    if (formattedText.includes("```")) {
+        return renderCodeBlocks(formattedText);
     }
 
-    if (text.includes("|")) {
-        const lines = text.split("\n").filter((line) => line.trim() !== "");
-        if (lines.length > 1 && lines[1].includes("---")) {
-            const headers = lines[0].split("|").filter((header) => header.trim() !== "");
-            const rows = lines.slice(2).map((row) => row.split("|").filter((cell) => cell.trim() !== ""));
+    if (formattedText.includes("|")) {
+        return renderTable(formattedText);
+    }
+    if (formattedText.includes("*") || formattedText.includes("-")) {
+        return renderLists(formattedText);
+    }
+    return renderText(formattedText);
+};
 
-            return (
+const renderCodeBlocks = (text: string) => {
+    const parts = text.split("```");
+    return (
+        <div>
+            {parts.map((part, index) =>
+                    index % 2 === 1 ? (
+                        <pre key={index} style={{ backgroundColor: "#656565", padding: "10px", borderRadius: "10px" }}>
+            <code>{part.trim()}</code>
+          </pre>
+                    ) : (
+                        <span key={index} dangerouslySetInnerHTML={{ __html: part }} />
+                    )
+            )}
+        </div>
+    );
+};
+
+const renderTable = (text: string) => {
+    const lines = text.split("\n").filter((line) => line.trim() !== "");
+
+    let tableStartIndex = -1;
+    let headerLineIndex = -1;
+
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i].includes("|---")) {
+            tableStartIndex = i;
+            if (i > 0 && lines[i - 1].includes("|")) {
+                headerLineIndex = i - 1;
+            }
+        } else if (lines[i].includes("|") && headerLineIndex === -1 && tableStartIndex === -1) {
+            headerLineIndex = i;
+        }
+    }
+
+    if (tableStartIndex >= 0 || headerLineIndex >= 0) {
+        let tableEndIndex = -1;
+        if(tableStartIndex > -1){
+            for (let i = tableStartIndex + 1; i < lines.length; i++) {
+                if (!lines[i].includes("|") && !lines[i].includes("---")) {
+                    tableEndIndex = i;
+                    break;
+                }
+            }
+            if (tableEndIndex === -1) {
+                tableEndIndex = lines.length;
+            }
+        } else {
+            for (let i = headerLineIndex + 1; i < lines.length; i++) {
+                if (!lines[i].includes("|") && !lines[i].includes("---")) {
+                    tableEndIndex = i;
+                    break;
+                }
+            }
+            if (tableEndIndex === -1) {
+                tableEndIndex = lines.length;
+            }
+        }
+
+        let beforeTable = "";
+        let tableLines = [];
+
+        if(tableStartIndex > -1){
+            beforeTable = lines.slice(0, headerLineIndex > -1 ? headerLineIndex : tableStartIndex).join("\n");
+            tableLines = lines.slice(headerLineIndex > -1 ? headerLineIndex : tableStartIndex, tableEndIndex);
+        } else {
+            beforeTable = lines.slice(0, headerLineIndex).join("\n");
+            tableLines = lines.slice(headerLineIndex, tableEndIndex);
+        }
+
+        const headers = tableLines[0].split("|").filter((header) => header.trim() !== "");
+
+        const rows = [];
+        let startRowIndex = 1;
+        if(tableStartIndex > -1 && headerLineIndex > -1){
+            startRowIndex = 2;
+        }
+
+        for (let i = startRowIndex; i < tableLines.length; i++) {
+            const row = tableLines[i].split("|").filter(c => c.trim() !== "");
+            rows.push(row);
+        }
+
+        const afterTableContent = lines.slice(tableEndIndex).join("\n");
+
+        return (
+            <div>
+                {beforeTable && (
+                    <div style={{ fontWeight: "bold", marginBottom: "10px" }} dangerouslySetInnerHTML={{ __html: beforeTable.replace(/\n/g, "<br>") }} />
+                )}
+
                 <Table>
                     <thead>
                     <tr>
                         {headers.map((header, index) => (
-                            <th key={index}>{header.trim()}</th>
+                            <th key={index} dangerouslySetInnerHTML={{ __html: header.trim() }} />
                         ))}
                     </tr>
                     </thead>
@@ -61,45 +146,41 @@ export const renderMessage = (text: string) => {
                     {rows.map((row, rowIndex) => (
                         <tr key={rowIndex}>
                             {row.map((cell, cellIndex) => (
-                                <td key={cellIndex}>{cell.trim()}</td>
+                                <td key={cellIndex} dangerouslySetInnerHTML={{ __html: cell.trim() }} />
                             ))}
                         </tr>
                     ))}
                     </tbody>
                 </Table>
-            );
-        }
+
+                {afterTableContent && (
+                    <div dangerouslySetInnerHTML={{ __html: afterTableContent.replace(/\n/g, "<br>") }} />
+                )}
+            </div>
+        );
     }
 
-    return renderLists(text);
+    return renderText(text);
 };
 
 const renderLists = (text: string) => {
     const lines = text.split("\n").filter((line) => line.trim() !== "");
-
     return (
         <List>
             {lines.map((line, index) => {
                 if (line.trim().startsWith("* ") || line.trim().startsWith("- ")) {
                     return (
                         <ul key={index} style={{ listStyleType: "disc", marginLeft: "20px", paddingLeft: "10px" }}>
-                            <li style={{ marginBottom: "8px" }}>{line.trim().substring(2)}</li>
+                            <li dangerouslySetInnerHTML={{ __html: line.trim().substring(2) }} />
                         </ul>
                     );
-                } else if (line.trim().startsWith("**") && line.trim().endsWith("**")) {
-                    return (
-                        <div key={index} style={{ fontWeight: "bold", fontSize: "1.2em", margin: "16px 0 8px 0" }}>
-                            {line.trim().slice(2, -2)}
-                        </div>
-                    );
-                } else {
-                    return (
-                        <div key={index}>
-                            {line}
-                        </div>
-                    );
                 }
+                return <div key={index} dangerouslySetInnerHTML={{ __html: line }} />;
             })}
         </List>
     );
+};
+
+const renderText = (text: string) => {
+    return <div dangerouslySetInnerHTML={{ __html: text }} />;
 };
