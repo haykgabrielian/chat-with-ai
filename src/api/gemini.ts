@@ -1,5 +1,5 @@
-const API_KEY = "AIzaSyBFyrzpsk5ywSQ88AfbtUsAY8QJCN6mal8";
-const API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+const API_URL = import.meta.env.VITE_GEMINI_API_URL;
 
 export const fetchGeminiResponse = async (messages: { sender: string; text: string }[]) => {
     const last10Messages = messages.slice(-10);
