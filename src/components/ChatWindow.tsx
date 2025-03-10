@@ -45,6 +45,7 @@ const MessagesContent = styled.div`
 `;
 
 const Message = styled.div<{ isSentByMe: boolean }>`
+    position: relative;
     width: max-content;
     max-width: 550px;
     background-color: ${(props) => (props.isSentByMe ? "#0084ff" : "#4e4e4e")};
@@ -53,6 +54,30 @@ const Message = styled.div<{ isSentByMe: boolean }>`
     text-align: left;
     border-radius: 20px;
     padding: 8px;
+    &:before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        bottom: -2px;
+        ${(props) => (props.isSentByMe ? "right: -7px;" : "left: -7px;")}
+        height: 20px;
+        border-${(props) => (props.isSentByMe ? "right" : "left")}: 20px solid ${(props) => (props.isSentByMe ? "#0084ff" : "#4e4e4e")};
+        border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 16px 14px;
+        -webkit-transform: translate(0, -2px);
+    }
+
+    &:after {
+        content: "";
+        position: absolute;
+        z-index: ${(props) => (props.isSentByMe ? "1" : "3")};
+        bottom: -2px;
+        ${(props) => (props.isSentByMe ? "right: -56px;" : "left: 4px;")}
+        width: 26px;
+        height: 20px;
+        background: #424242;
+        border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 10px;
+        -webkit-transform: ${(props) => (props.isSentByMe ? "translate(-30px, -2px);" : "translate(-30px, -2px);")}
+    }
 `;
 
 const NoMessage = styled.div`
