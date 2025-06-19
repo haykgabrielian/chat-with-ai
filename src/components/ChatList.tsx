@@ -68,7 +68,7 @@ const ChatList: React.FC<Props> = ({ chats, selectedChatId, selectChat }) => {
             </Title>
             <ul>
                 {chats.length > 0 ? (
-                    chats.map((chat) => (
+                    [...chats].sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? '')).map(chat => (
                         <ChatItem
                             key={chat.id}
                             onClick={() => selectChat(chat)}

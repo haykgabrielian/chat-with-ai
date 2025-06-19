@@ -27,10 +27,13 @@ export const useChats = () => {
             return sentence.split(' ').slice(0, 4).join(' ');
         };
 
-        const newChat = {
+        const now = new Date().toISOString();
+
+        const newChat: Chat = {
             id: Date.now().toString(),
             name: getFirstFourWords(message),
             messages: [{ sender: "Me", text: message }],
+            timestamp: now,
         };
 
         await saveChat(newChat);
@@ -39,6 +42,7 @@ export const useChats = () => {
 
         const geminiReply = await fetchGeminiResponse(newChat.messages);
         newChat.messages.push({ sender: "Gemini", text: geminiReply });
+        newChat.timestamp = new Date().toISOString();
 
         await saveChat(newChat);
         await fetchChats();
@@ -47,9 +51,12 @@ export const useChats = () => {
     const sendMessage = async (message: string) => {
         if (!selectedChat) return;
 
-        const updatedChat = {
+        const now = new Date().toISOString();
+
+        const updatedChat: Chat = {
             ...selectedChat,
             messages: [...selectedChat.messages, { sender: "Me", text: message }],
+            timestamp: now,
         };
 
         await saveChat(updatedChat);
@@ -58,6 +65,7 @@ export const useChats = () => {
 
         const geminiReply = await fetchGeminiResponse(updatedChat.messages);
         updatedChat.messages.push({ sender: "Gemini", text: geminiReply });
+        updatedChat.timestamp = new Date().toISOString();
 
         await saveChat(updatedChat);
         await fetchChats();
