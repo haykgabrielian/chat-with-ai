@@ -10,7 +10,7 @@ type Props = {
 
 const Container = styled.div`
     width: 300px;
-    background-color: #171717;
+    background-color: #40414f;
     padding: 16px;
     overflow-y: auto;
 `;
@@ -34,24 +34,34 @@ const ChatItem = styled.li<{ isSelected: boolean }>`
     color: #cfcfcf;
     border-radius: 10px;
     text-align: left;
-    background-color: ${(props) => (props.isSelected ? "#424242" : "transparent")};
+    background-color: ${(props) => (props.isSelected ? "#1b1b22" : "transparent")};
     &:hover {
-        background-color: #595959;
+        background-color: #1b1b22;
     }
 `;
 
 const NewChatButton = styled.button`
-    background-color: #007bff;
-    font-size: 12px;
+    background-color: #565969;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 14px;
+    padding: 8px;
+    border-radius: 8px;
     cursor: pointer;
-    border-top: 1px solid #636363;
-    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    width: 22px;
+    height: 22px;
+    
     &:hover {
-        background-color: #0056b3;
+        background-color: #0d8f6f;
+    }
+    
+    svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
     }
 `;
 
@@ -64,7 +74,11 @@ const ChatList: React.FC<Props> = ({ chats, selectedChatId, selectChat }) => {
         <Container>
             <Title>
                 <p>Chats</p>
-                <NewChatButton onClick={() => selectChat(null)}>New Chat</NewChatButton>
+                <NewChatButton onClick={() => selectChat(null)} title="New Chat">
+                    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                        <path d="m 3 1 c -1.644531 0 -3 1.355469 -3 3 v 6 c 0 1.644531 1.355469 3 3 3 h 1 v 3 l 3 -3 v -1 c 0 -0.550781 -0.449219 -1 -1 -1 h -3 c -0.570312 0 -1 -0.429688 -1 -1 v -6 c 0 -0.554688 0.445312 -1 1 -1 h 10 c 0.554688 0 1 0.445312 1 1 v 4 c 0 0.550781 0.449219 1 1 1 s 1 -0.449219 1 -1 v -4 c 0 -1.644531 -1.355469 -3 -3 -3 z m 8 7 v 3 h -3 v 2 h 3 v 3 h 2 v -3 h 3 v -2 h -3 v -3 z m 0 0"/>
+                    </svg>
+                </NewChatButton>
             </Title>
             <ul>
                 {chats.length > 0 ? (

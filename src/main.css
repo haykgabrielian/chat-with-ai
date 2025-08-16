@@ -92,11 +92,6 @@ button, a {
   user-select: none;
 }
 
-:focus {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
 html {
   font-size: 16px;
 }

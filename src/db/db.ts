@@ -3,7 +3,7 @@ import { openDB } from "idb";
 const DB_NAME = "ChatAppDB";
 const STORE_NAME = "chats";
 
-export const initDB = async () => {
+const initDB = async () => {
     return openDB(DB_NAME, 1, {
         upgrade(db) {
             if (!db.objectStoreNames.contains(STORE_NAME)) {

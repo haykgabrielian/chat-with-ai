@@ -9,7 +9,7 @@ const Container = styled.div`
 `;
 
 const Home = () => {
-    const { chats, selectedChat, selectChat, createNewChat, sendMessage } = useChats();
+    const { chats, selectedChat, selectChat, createNewChat, sendMessage, loadingState } = useChats();
 
     return (
         <Container>
@@ -18,6 +18,7 @@ const Home = () => {
                 selectedChat={selectedChat}
                 sendMessage={sendMessage}
                 createNewChat={createNewChat}
+                loadingState={loadingState}
             />
         </Container>
     );

@@ -4,13 +4,14 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
-import { Chat, Msg } from "@/types/common";
+import { Chat, Msg, LoadingState } from "@/types/common";
 import 'highlight.js/styles/monokai.css';
 
 type Props = {
     selectedChat: Chat | null;
     sendMessage: (message: string) => void;
     createNewChat: (message: string) => void;
+    loadingState: LoadingState;
 };
 
 const Container = styled.div`
@@ -69,7 +70,7 @@ const Message = styled.div<{ isSentByMe: boolean }>`
         height: 20px;
         border-${(props) => (props.isSentByMe ? "right" : "left")}: 20px solid ${(props) => (props.isSentByMe ? "#0084ff" : "#4e4e4e")};
         border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 16px 14px;
-        -webkit-transform: translate(0, -2px);
+        transform: translate(0, -2px);
     }
 
     &:after {
@@ -82,7 +83,63 @@ const Message = styled.div<{ isSentByMe: boolean }>`
         height: 20px;
         background: #424242;
         border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 10px;
-        -webkit-transform: ${(props) => (props.isSentByMe ? "translate(-30px, -2px);" : "translate(-30px, -2px);")}
+        transform: ${(props) => (props.isSentByMe ? "translate(-30px, -2px);" : "translate(-30px, -2px);")}
+    }
+`;
+
+const TypingIndicator = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 16px;
+    background-color: #4e4e4e;
+    border-radius: 20px;
+    width: fit-content;
+    margin-top: 8px;
+    margin-left: 0;
+    position: relative;
+    &:before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        bottom: -2px;
+        left: -7px;
+        height: 20px;
+        border-left: 20px solid #4e4e4e;
+        border-bottom-right-radius: 16px 14px;
+        transform: translate(0, -2px);
+    }
+    &:after {
+        content: "";
+        position: absolute;
+        z-index: 3;
+        bottom: -2px;
+        left: 4px;
+        width: 26px;
+        height: 20px;
+        background: #424242;
+        border-bottom-right-radius: 10px;
+        transform: translate(-30px, -2px);
+    }
+`;
+
+const Dot = styled.div<{ delay: number }>`
+    width: 8px;
+    height: 8px;
+    background-color: #cfcfcf;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+    animation-delay: ${props => props.delay}s;
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.4;
+        }
+        30% {
+            transform: translateY(-6px);
+            opacity: 1;
+        }
     }
 `;
 
@@ -100,38 +157,59 @@ const NoMessage = styled.div`
 
 const InputContainer = styled.div`
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 90px;
-    border-top: 1px solid #636363;
-    padding: 8px 16px;
+    flex-direction: column;
+    padding: 20px 0;
+    border-top: 1px solid #565869;
 `;
 
-const Input = styled.input`
+const InputWrapper = styled.div`
+    position: relative;
+    max-width: 768px;
+    margin: 0 auto;
     width: 100%;
-    padding: 16px 8px;
-    margin-right: 8px;
-    background: transparent;
+`;
+
+const Input = styled.textarea`
+    width: 100%;
+    min-height: 52px;
+    max-height: 200px;
+    padding: 14px 45px 14px 16px;
+    background: #40414f;
+    border-radius: 12px;
     color: #cfcfcf;
-    border: 1px solid #cfcfcf;
-    border-radius: 16px;
+    font-size: 16px;
+    line-height: 1.5;
+    resize: none;
     outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+    opacity: ${props => props.disabled ? 0.5 : 1};
+    cursor: ${props => props.disabled ? 'not-allowed' : 'text'};
+    
     &::placeholder {
-        color: #888;
+        color: #8e8ea0;
     }
 `;
 
 const SendButton = styled.button`
-    background-color: #007bff;
-    color: white;
+    position: absolute;
+    right: 8px;
+    bottom: 14px;
+    width: 32px;
+    height: 32px;
+    background: ${props => props.disabled ? '#565869' : '#10a37f'};
     border: none;
-    padding: 8px 16px;
-    border-radius: 14px;
-    cursor: pointer;
-    border-top: 1px solid #636363;
-    outline: none;
-    &:hover {
-        background-color: #0056b3;
+    border-radius: 6px;
+    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    
+    svg {
+        width: 16px;
+        height: 16px;
+        fill: #fff;
     }
 `;
 
@@ -214,24 +292,38 @@ const MarkdownWrapper = styled.div`
   }
 `;
 
-const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat }) => {
+const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat, loadingState }) => {
     const [message, setMessage] = useState("");
     const messagesContentRef = useRef<HTMLDivElement | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
     const handleSend = () => {
-        if (!message.trim()) return;
+        if (!message.trim() || loadingState.isLoading) return;
         if (!selectedChat) {
             createNewChat(message);
         } else {
             sendMessage(message);
         }
         setMessage("");
+        if (textareaRef.current) {
+            textareaRef.current.style.height = 'auto';
+        }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (e.key === "Enter" && !e.shiftKey && !loadingState.isLoading) {
+            e.preventDefault();
             handleSend();
         }
+    };
+
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setMessage(e.target.value);
+        
+        // Auto-resize textarea
+        const textarea = e.target;
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
     };
 
     useEffect(() => {
@@ -239,7 +331,7 @@ const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat 
             const container = messagesContentRef.current;
             container.scrollTop = container.scrollHeight;
         }
-    }, [selectedChat?.messages.length]);
+    }, [selectedChat?.messages.length, loadingState.isLoading]);
 
     return (
         <Container>
@@ -259,6 +351,13 @@ const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat 
                                 </MarkdownWrapper>
                             </Message>
                         ))}
+                        {loadingState.isLoading && loadingState.currentChatId === selectedChat.id && (
+                            <TypingIndicator>
+                                <Dot delay={0} />
+                                <Dot delay={0.2} />
+                                <Dot delay={0.4} />
+                            </TypingIndicator>
+                        )}
                     </MessagesContent>
                 ) : (
                     <NoMessage>
@@ -268,14 +367,29 @@ const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat 
             </MessagesContainer>
 
             <InputContainer>
-                <Input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Type a message..."
-                />
-                <SendButton onClick={handleSend}>Send</SendButton>
+                <InputWrapper>
+                    <Input
+                        ref={textareaRef}
+                        value={message}
+                        onChange={handleInput}
+                        onKeyDown={handleKeyDown}
+                        placeholder={loadingState.isLoading ? "AI is thinking..." : "Message ChatGPT..."}
+                        rows={1}
+                        disabled={loadingState.isLoading}
+                    />
+                    <SendButton 
+                        onClick={handleSend}
+                        disabled={!message.trim() || loadingState.isLoading}
+                        title="Send message"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision"
+                             text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd"
+                             clip-rule="evenodd" viewBox="0 0 511 512.32">
+                            <path fill="#fff"
+                                  d="M9.72 185.88L489.19 1.53c3.64-1.76 7.96-2.08 12.03-.53 7.83 2.98 11.76 11.74 8.78 19.57L326.47 502.56h-.02c-1.33 3.49-3.94 6.5-7.57 8.25-7.54 3.63-16.6.47-20.23-7.06l-73.78-152.97 146.67-209.97-209.56 146.3L8.6 213.64a15.117 15.117 0 01-7.6-8.25c-2.98-7.79.93-16.53 8.72-19.51z"/>
+                        </svg>
+                    </SendButton>
+                </InputWrapper>
             </InputContainer>
         </Container>
     );

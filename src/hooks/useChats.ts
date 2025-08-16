@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { fetchGeminiResponse } from "../api/gemini";
 import { getAllChats, saveChat } from "../db/db";
-import { Chat } from "../types/common";
+import { Chat, LoadingState } from "../types/common";
 
 export const useChats = () => {
     const [chats, setChats] = useState<Chat[]>([]);
     const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+    const [loadingState, setLoadingState] = useState<LoadingState>({ isLoading: false });
 
     const fetchChats = async () => {
         const storedChats = await getAllChats();
@@ -21,7 +22,7 @@ export const useChats = () => {
     };
 
     const createNewChat = async (message: string) => {
-        if (!message.trim()) return;
+        if (!message.trim() || loadingState.isLoading) return;
 
         const getFirstFourWords = (sentence: string) => {
             return sentence.split(' ').slice(0, 4).join(' ');
@@ -40,16 +41,31 @@ export const useChats = () => {
         await fetchChats();
         setSelectedChat(newChat);
 
-        const geminiReply = await fetchGeminiResponse(newChat.messages);
-        newChat.messages.push({ sender: "Gemini", text: geminiReply });
-        newChat.timestamp = new Date().toISOString();
+        // Set loading state
+        setLoadingState({ isLoading: true, currentChatId: newChat.id });
 
-        await saveChat(newChat);
-        await fetchChats();
+        try {
+            const geminiReply = await fetchGeminiResponse(newChat.messages);
+            newChat.messages.push({ sender: "Gemini", text: geminiReply });
+            newChat.timestamp = new Date().toISOString();
+
+            await saveChat(newChat);
+            await fetchChats();
+            setSelectedChat(newChat);
+        } catch (error) {
+            console.error("Error getting response:", error);
+            newChat.messages.push({ sender: "Gemini", text: "Sorry, I encountered an error. Please try again." });
+            newChat.timestamp = new Date().toISOString();
+            await saveChat(newChat);
+            await fetchChats();
+            setSelectedChat(newChat);
+        } finally {
+            setLoadingState({ isLoading: false });
+        }
     };
 
     const sendMessage = async (message: string) => {
-        if (!selectedChat) return;
+        if (!selectedChat || loadingState.isLoading) return;
 
         const now = new Date().toISOString();
 
@@ -63,13 +79,35 @@ export const useChats = () => {
         await fetchChats();
         setSelectedChat(updatedChat);
 
-        const geminiReply = await fetchGeminiResponse(updatedChat.messages);
-        updatedChat.messages.push({ sender: "Gemini", text: geminiReply });
-        updatedChat.timestamp = new Date().toISOString();
+        // Set loading state
+        setLoadingState({ isLoading: true, currentChatId: selectedChat.id });
 
-        await saveChat(updatedChat);
-        await fetchChats();
+        try {
+            const geminiReply = await fetchGeminiResponse(updatedChat.messages);
+            updatedChat.messages.push({ sender: "Gemini", text: geminiReply });
+            updatedChat.timestamp = new Date().toISOString();
+
+            await saveChat(updatedChat);
+            await fetchChats();
+            setSelectedChat(updatedChat);
+        } catch (error) {
+            console.error("Error getting response:", error);
+            updatedChat.messages.push({ sender: "Gemini", text: "Sorry, I encountered an error. Please try again." });
+            updatedChat.timestamp = new Date().toISOString();
+            await saveChat(updatedChat);
+            await fetchChats();
+            setSelectedChat(updatedChat);
+        } finally {
+            setLoadingState({ isLoading: false });
+        }
     };
 
-    return { chats, selectedChat, selectChat, createNewChat, sendMessage };
+    return { 
+        chats, 
+        selectedChat,
+        loadingState,
+        selectChat, 
+        createNewChat, 
+        sendMessage
+    };
 };

@@ -9,3 +9,8 @@ export type Chat = {
     messages: Msg[];
     timestamp?: string;
 };
+
+export type LoadingState = {
+    isLoading: boolean;
+    currentChatId?: string;
+};
