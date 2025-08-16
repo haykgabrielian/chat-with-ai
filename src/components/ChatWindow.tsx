@@ -1,65 +1,73 @@
-import React, { useState, useEffect, useRef } from "react";
-import styled from "styled-components";
+import React, { useState, useEffect, useRef } from 'react';
+import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
-import { Chat, Msg, LoadingState } from "@/types/common";
-import { BACKGROUND_COLORS, TEXT_COLORS, BORDER_COLORS, INPUT_COLORS, BUTTON_COLORS, MESSAGE_BUBBLE_COLORS, STATUS_COLORS } from "@/theme/colors";
-import { SendIcon } from "@/components/icons";
-import EmptyState from "@/components/EmptyState";
+import { Chat, Msg, LoadingState } from '@/types/common';
+import {
+  BACKGROUND_COLORS,
+  TEXT_COLORS,
+  BORDER_COLORS,
+  INPUT_COLORS,
+  BUTTON_COLORS,
+  MESSAGE_BUBBLE_COLORS,
+  STATUS_COLORS,
+} from '@/theme/colors';
+import { SendIcon } from '@/components/icons';
+import EmptyState from '@/components/EmptyState';
 import 'highlight.js/styles/monokai.css';
 
 type Props = {
-    selectedChat: Chat | null;
-    sendMessage: (message: string) => void;
-    createNewChat: (message: string) => void;
-    loadingState: LoadingState;
+  selectedChat: Chat | null;
+  sendMessage: (message: string) => void;
+  createNewChat: (message: string) => void;
+  loadingState: LoadingState;
 };
 
 const Container = styled.div`
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 0 150px;
-    height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 150px;
+  height: 100vh;
 `;
 
 const Header = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 50px;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 8px;
-    border-bottom: 1px solid ${BORDER_COLORS.HEADER};
-    color: ${TEXT_COLORS.PRIMARY};
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  border-bottom: 1px solid ${BORDER_COLORS.HEADER};
+  color: ${TEXT_COLORS.PRIMARY};
 `;
 
 const MessagesContainer = styled.div`
-    flex-grow: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  flex-grow: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 `;
 
 const MessagesContent = styled.div`
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 16px;
 `;
 
 const Message = styled.div<{ isSentByMe: boolean }>`
     position: relative;
     width: max-content;
     max-width: 900px;
-    background-color: ${(props) => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
+    background-color: ${props => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
     color: ${TEXT_COLORS.PRIMARY};
-    margin-left: ${(props) => (props.isSentByMe ? "auto" : "unset")};
+    margin-left: ${props => (props.isSentByMe ? 'auto' : 'unset')};
     text-align: left;
     border-radius: 20px;
     padding: 8px;
@@ -69,158 +77,164 @@ const Message = styled.div<{ isSentByMe: boolean }>`
         position: absolute;
         z-index: -1;
         bottom: -2px;
-        ${(props) => (props.isSentByMe ? "right: -7px;" : "left: -7px;")}
+        ${props => (props.isSentByMe ? 'right: -7px;' : 'left: -7px;')}
         height: 20px;
-        border-${(props) => (props.isSentByMe ? "right" : "left")}: 20px solid ${(props) => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
-        border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 16px 14px;
+        border-${props => (props.isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
+        border-bottom-${props => (props.isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
         transform: translate(0, -2px);
     }
 
     &:after {
         content: "";
         position: absolute;
-        z-index: ${(props) => (props.isSentByMe ? "1" : "3")};
+        z-index: ${props => (props.isSentByMe ? '1' : '3')};
         bottom: -2px;
-        ${(props) => (props.isSentByMe ? "right: -56px;" : "left: 4px;")}
+        ${props => (props.isSentByMe ? 'right: -56px;' : 'left: 4px;')}
         width: 26px;
         height: 20px;
         background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
-        border-bottom-${(props) => (props.isSentByMe ? "left" : "right")}-radius: 10px;
-        transform: ${(props) => (props.isSentByMe ? "translate(-30px, -2px);" : "translate(-30px, -2px);")}
+        border-bottom-${props => (props.isSentByMe ? 'left' : 'right')}-radius: 10px;
+        transform: ${props => (props.isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
     }
 `;
 
 const TypingIndicator = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    padding: 12px 16px;
-    background-color: ${BACKGROUND_COLORS.TYPING_INDICATOR};
-    border-radius: 20px;
-    width: fit-content;
-    margin-top: 8px;
-    margin-left: 0;
-    position: relative;
-    &:before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        bottom: -2px;
-        left: -7px;
-        height: 20px;
-        border-left: 20px solid ${BACKGROUND_COLORS.TYPING_INDICATOR};
-        border-bottom-right-radius: 16px 14px;
-        transform: translate(0, -2px);
-    }
-    &:after {
-        content: "";
-        position: absolute;
-        z-index: 3;
-        bottom: -2px;
-        left: 4px;
-        width: 26px;
-        height: 20px;
-        background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
-        border-bottom-right-radius: 10px;
-        transform: translate(-30px, -2px);
-    }
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 16px;
+  background-color: ${BACKGROUND_COLORS.TYPING_INDICATOR};
+  border-radius: 20px;
+  width: fit-content;
+  margin-top: 8px;
+  margin-left: 0;
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    bottom: -2px;
+    left: -7px;
+    height: 20px;
+    border-left: 20px solid ${BACKGROUND_COLORS.TYPING_INDICATOR};
+    border-bottom-right-radius: 16px 14px;
+    transform: translate(0, -2px);
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    bottom: -2px;
+    left: 4px;
+    width: 26px;
+    height: 20px;
+    background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
+    border-bottom-right-radius: 10px;
+    transform: translate(-30px, -2px);
+  }
 `;
 
 const Dot = styled.div<{ delay: number }>`
-    width: 8px;
-    height: 8px;
-    background-color: #cfcfcf;
-    border-radius: 50%;
-    animation: typing 1.4s infinite ease-in-out;
-    animation-delay: ${props => props.delay}s;
+  width: 8px;
+  height: 8px;
+  background-color: #cfcfcf;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out;
+  animation-delay: ${props => props.delay}s;
 
-    @keyframes typing {
-        0%, 60%, 100% {
-            transform: translateY(0);
-            opacity: 0.4;
-        }
-        30% {
-            transform: translateY(-6px);
-            opacity: 1;
-        }
+  @keyframes typing {
+    0%,
+    60%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.4;
     }
+    30% {
+      transform: translateY(-6px);
+      opacity: 1;
+    }
+  }
 `;
 
 const NoMessage = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    p {
-        color: #cfcfcf;
-        font-size: 30px;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  p {
+    color: #cfcfcf;
+    font-size: 30px;
+  }
 `;
 
 const InputContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    padding: 20px 0;
-    border-top: 1px solid #565869;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 0;
+  border-top: 1px solid #565869;
 `;
 
 const InputWrapper = styled.div`
-    position: relative;
-    max-width: 768px;
-    margin: 0 auto;
-    width: 100%;
+  position: relative;
+  max-width: 768px;
+  margin: 0 auto;
+  width: 100%;
 `;
 
 const Input = styled.textarea`
-    width: 100%;
-    min-height: 52px;
-    max-height: 200px;
-    padding: 14px 45px 14px 16px;
-    background: ${INPUT_COLORS.BACKGROUND};
-    border-radius: 12px;
-    color: ${TEXT_COLORS.PRIMARY};
-    font-size: 16px;
-    line-height: 1.5;
-    resize: none;
-    outline: none;
-    font-family: inherit;
-    transition: border-color 0.2s ease;
-    opacity: ${props => props.disabled ? 0.5 : 1};
-    cursor: ${props => props.disabled ? 'not-allowed' : 'text'};
-    
-    &::placeholder {
-        color: ${INPUT_COLORS.PLACEHOLDER};
-    }
+  width: 100%;
+  min-height: 52px;
+  max-height: 200px;
+  padding: 14px 45px 14px 16px;
+  background: ${INPUT_COLORS.BACKGROUND};
+  border-radius: 12px;
+  color: ${TEXT_COLORS.PRIMARY};
+  font-size: 16px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  opacity: ${props => (props.disabled ? 0.5 : 1)};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'text')};
+
+  &::placeholder {
+    color: ${INPUT_COLORS.PLACEHOLDER};
+  }
 `;
 
 const SendButton = styled.button`
-    position: absolute;
-    right: 8px;
-    bottom: 14px;
-    width: 32px;
-    height: 32px;
-    background: ${props => props.disabled ? BUTTON_COLORS.PRIMARY : STATUS_COLORS.SUCCESS};
-    border: none;
-    border-radius: 6px;
-    cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s ease;
-    
-    svg {
-        width: 16px;
-        height: 16px;
-        fill: ${TEXT_COLORS.WHITE};
-    }
+  position: absolute;
+  right: 8px;
+  bottom: 14px;
+  width: 32px;
+  height: 32px;
+  background: ${props =>
+    props.disabled ? BUTTON_COLORS.PRIMARY : STATUS_COLORS.SUCCESS};
+  border: none;
+  border-radius: 6px;
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    fill: ${TEXT_COLORS.WHITE};
+  }
 `;
 
 const MarkdownWrapper = styled.div`
   font-size: 0.875rem;
   line-height: 1.5;
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     margin: 1rem 0 0.5rem;
     font-weight: 600;
     color: inherit;
@@ -231,7 +245,8 @@ const MarkdownWrapper = styled.div`
     color: inherit;
   }
 
-  ul, ol {
+  ul,
+  ol {
     margin-left: 1.25rem;
     margin-bottom: 0.75rem;
   }
@@ -264,7 +279,8 @@ const MarkdownWrapper = styled.div`
     border: 1px solid #ccc;
   }
 
-  th, td {
+  th,
+  td {
     border: 1px solid #aaa;
     padding: 0.5rem;
     text-align: left;
@@ -295,100 +311,110 @@ const MarkdownWrapper = styled.div`
   }
 `;
 
-const ChatWindow: React.FC<Props> = ({ selectedChat, sendMessage, createNewChat, loadingState }) => {
-    const [message, setMessage] = useState("");
-    const messagesContentRef = useRef<HTMLDivElement | null>(null);
-    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+const ChatWindow: React.FC<Props> = ({
+  selectedChat,
+  sendMessage,
+  createNewChat,
+  loadingState,
+}) => {
+  const [message, setMessage] = useState('');
+  const messagesContentRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-    const handleSend = () => {
-        if (!message.trim() || loadingState.isLoading) return;
-        if (!selectedChat) {
-            createNewChat(message);
-        } else {
-            sendMessage(message);
-        }
-        setMessage("");
-        if (textareaRef.current) {
-            textareaRef.current.style.height = 'auto';
-        }
-    };
+  const handleSend = () => {
+    if (!message.trim() || loadingState.isLoading) return;
+    if (!selectedChat) {
+      createNewChat(message);
+    } else {
+      sendMessage(message);
+    }
+    setMessage('');
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
+  };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey && !loadingState.isLoading) {
-            e.preventDefault();
-            handleSend();
-        }
-    };
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && !loadingState.isLoading) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
 
-    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setMessage(e.target.value);
-        
-        // Auto-resize textarea
-        const textarea = e.target;
-        textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
-    };
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setMessage(e.target.value);
 
-    useEffect(() => {
-        if (messagesContentRef.current) {
-            const container = messagesContentRef.current;
-            container.scrollTop = container.scrollHeight;
-        }
-    }, [selectedChat?.messages.length, loadingState.isLoading]);
+    // Auto-resize textarea
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+  };
 
-    return (
-        <Container>
-            {selectedChat && <Header>{selectedChat.name}</Header>}
-            <MessagesContainer>
-                {selectedChat ? (
-                    <MessagesContent ref={messagesContentRef}>
-                        {selectedChat.messages.map((msg: Msg, index: number) => (
-                            <Message key={index} isSentByMe={msg.sender === "Me"}>
-                                <MarkdownWrapper>
-                                    <ReactMarkdown
-                                        remarkPlugins={[remarkGfm, remarkBreaks]}
-                                        rehypePlugins={[rehypeHighlight]}
-                                    >
-                                        {msg.text}
-                                    </ReactMarkdown>
-                                </MarkdownWrapper>
-                            </Message>
-                        ))}
-                        {loadingState.isLoading && loadingState.currentChatId === selectedChat.id && (
-                            <TypingIndicator>
-                                <Dot delay={0} />
-                                <Dot delay={0.2} />
-                                <Dot delay={0.4} />
-                            </TypingIndicator>
-                        )}
-                    </MessagesContent>
-                ) : (
-                    <EmptyState />
-                )}
-            </MessagesContainer>
+  useEffect(() => {
+    if (messagesContentRef.current) {
+      const container = messagesContentRef.current;
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [selectedChat?.messages.length, loadingState.isLoading]);
 
-            <InputContainer>
-                <InputWrapper>
-                    <Input
-                        ref={textareaRef}
-                        value={message}
-                        onChange={handleInput}
-                        onKeyDown={handleKeyDown}
-                        placeholder={loadingState.isLoading ? "AI is thinking..." : "Message ChatGPT..."}
-                        rows={1}
-                        disabled={loadingState.isLoading}
-                    />
-                    <SendButton 
-                        onClick={handleSend}
-                        disabled={!message.trim() || loadingState.isLoading}
-                        title="Send message"
-                    >
-                        <SendIcon />
-                    </SendButton>
-                </InputWrapper>
-            </InputContainer>
-        </Container>
-    );
+  return (
+    <Container>
+      {selectedChat && <Header>{selectedChat.name}</Header>}
+      <MessagesContainer>
+        {selectedChat ? (
+          <MessagesContent ref={messagesContentRef}>
+            {selectedChat.messages.map((msg: Msg, index: number) => (
+              <Message key={index} isSentByMe={msg.sender === 'Me'}>
+                <MarkdownWrapper>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                </MarkdownWrapper>
+              </Message>
+            ))}
+            {loadingState.isLoading &&
+              loadingState.currentChatId === selectedChat.id && (
+                <TypingIndicator>
+                  <Dot delay={0} />
+                  <Dot delay={0.2} />
+                  <Dot delay={0.4} />
+                </TypingIndicator>
+              )}
+          </MessagesContent>
+        ) : (
+          <EmptyState />
+        )}
+      </MessagesContainer>
+
+      <InputContainer>
+        <InputWrapper>
+          <Input
+            ref={textareaRef}
+            value={message}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            placeholder={
+              loadingState.isLoading
+                ? 'ZruyC is thinking...'
+                : 'Message to ZruyC...'
+            }
+            rows={1}
+            disabled={loadingState.isLoading}
+          />
+          <SendButton
+            onClick={handleSend}
+            disabled={!message.trim() || loadingState.isLoading}
+            title='Send message'
+          >
+            <SendIcon />
+          </SendButton>
+        </InputWrapper>
+      </InputContainer>
+    </Container>
+  );
 };
 
 export default ChatWindow;
