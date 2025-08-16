@@ -1,18 +1,27 @@
 import React from "react";
 import styled from "styled-components";
-import { Chat } from "../types/common";
+import { Chat } from "@/types/common";
+import { BACKGROUND_COLORS, TEXT_COLORS, BUTTON_COLORS } from "@/theme/colors";
+import { PlusIcon, TrashIcon } from "@/components/icons";
 
 type Props = {
     chats: Chat[];
     selectedChatId: string | null;
     selectChat: (chat: Chat | null) => void;
+    removeChat: (chatId: string) => Promise<void>;
 };
 
 const Container = styled.div`
     width: 300px;
-    background-color: #40414f;
-    padding: 16px;
-    overflow-y: auto;
+    background-color: ${BACKGROUND_COLORS.SIDEBAR};
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+`;
+
+const Header = styled.div`
+    padding: 10px;
+    flex-shrink: 0;
 `;
 
 const Title = styled.h2`
@@ -24,25 +33,79 @@ const Title = styled.h2`
     font-size: 1.125rem;
     font-weight: bold;
     text-align: left;
-    color: #cfcfcf;
+    color: ${TEXT_COLORS.PRIMARY};
+`;
+
+const ChatListContainer = styled.div`
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    padding-top: 8px;
+`;
+
+const List = styled.ul`
+    list-style: none;
+    padding: 0;
+    margin: 0;
 `;
 
 const ChatItem = styled.li<{ isSelected: boolean }>`
     padding: 8px 12px;
     margin-bottom: 5px;
     cursor: pointer;
-    color: #cfcfcf;
+    color: ${TEXT_COLORS.PRIMARY};
     border-radius: 10px;
     text-align: left;
-    background-color: ${(props) => (props.isSelected ? "#1b1b22" : "transparent")};
+    background-color: ${(props) => (props.isSelected ? BACKGROUND_COLORS.CHAT_ITEM_SELECTED : "transparent")};
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     &:hover {
-        background-color: #1b1b22;
+        background-color: ${BACKGROUND_COLORS.CHAT_ITEM_HOVER};
+    }
+`;
+
+const ChatName = styled.span`
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+const DeleteButton = styled.button`
+    background: none;
+    border: none;
+    color: ${TEXT_COLORS.SECONDARY};
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease, color 0.2s ease;
+    
+    &:hover {
+        color: ${BUTTON_COLORS.DELETE_HOVER};
+        background-color: ${BUTTON_COLORS.DELETE_BG_HOVER};
+    }
+    
+    svg {
+        width: 14px;
+        height: 14px;
+        fill: currentColor;
+    }
+`;
+
+const ChatItemContainer = styled.div`
+    &:hover ${DeleteButton} {
+        opacity: 1;
     }
 `;
 
 const NewChatButton = styled.button`
-    background-color: #565969;
-    color: white;
+    background-color: ${BUTTON_COLORS.PRIMARY};
+    color: ${TEXT_COLORS.WHITE};
     border: none;
     padding: 8px;
     border-radius: 8px;
@@ -55,7 +118,7 @@ const NewChatButton = styled.button`
     height: 22px;
     
     &:hover {
-        background-color: #0d8f6f;
+        background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
     }
     
     svg {
@@ -66,35 +129,51 @@ const NewChatButton = styled.button`
 `;
 
 const NoChatsMessage = styled.p`
-    color: #cfcfcf;
+    color: ${TEXT_COLORS.PRIMARY};
+    text-align: center;
+    margin-top: 20px;
 `;
 
-const ChatList: React.FC<Props> = ({ chats, selectedChatId, selectChat }) => {
+const ChatList: React.FC<Props> = ({ chats, selectedChatId, selectChat, removeChat }) => {
+    const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
+        e.stopPropagation();
+        removeChat(chatId);
+    };
+
     return (
         <Container>
-            <Title>
-                <p>Chats</p>
-                <NewChatButton onClick={() => selectChat(null)} title="New Chat">
-                    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                        <path d="m 3 1 c -1.644531 0 -3 1.355469 -3 3 v 6 c 0 1.644531 1.355469 3 3 3 h 1 v 3 l 3 -3 v -1 c 0 -0.550781 -0.449219 -1 -1 -1 h -3 c -0.570312 0 -1 -0.429688 -1 -1 v -6 c 0 -0.554688 0.445312 -1 1 -1 h 10 c 0.554688 0 1 0.445312 1 1 v 4 c 0 0.550781 0.449219 1 1 1 s 1 -0.449219 1 -1 v -4 c 0 -1.644531 -1.355469 -3 -3 -3 z m 8 7 v 3 h -3 v 2 h 3 v 3 h 2 v -3 h 3 v -2 h -3 v -3 z m 0 0"/>
-                    </svg>
+            <Header>
+                <Title>
+                    <p>Chats</p>
+                                    <NewChatButton onClick={() => selectChat(null)} title="New Chat">
+                    <PlusIcon />
                 </NewChatButton>
-            </Title>
-            <ul>
-                {chats.length > 0 ? (
-                    [...chats].sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? '')).map(chat => (
-                        <ChatItem
-                            key={chat.id}
-                            onClick={() => selectChat(chat)}
-                            isSelected={chat.id === selectedChatId}
-                        >
-                            {chat.name}
-                        </ChatItem>
-                    ))
-                ) : (
-                    <NoChatsMessage>No chats available. Start a new one!</NoChatsMessage>
-                )}
-            </ul>
+                </Title>
+            </Header>
+            <ChatListContainer>
+                <List>
+                    {chats.length > 0 ? (
+                        [...chats].sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? '')).map(chat => (
+                            <ChatItemContainer key={chat.id}>
+                                <ChatItem
+                                    onClick={() => selectChat(chat)}
+                                    isSelected={chat.id === selectedChatId}
+                                >
+                                    <ChatName>{chat.name}</ChatName>
+                                    <DeleteButton 
+                                        onClick={(e) => handleDeleteChat(e, chat.id)}
+                                        title="Delete chat"
+                                    >
+                                        <TrashIcon />
+                                    </DeleteButton>
+                                </ChatItem>
+                            </ChatItemContainer>
+                        ))
+                    ) : (
+                        <NoChatsMessage>No chats available. Start a new one!</NoChatsMessage>
+                    )}
+                </List>
+            </ChatListContainer>
         </Container>
     );
 };

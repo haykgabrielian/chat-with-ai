@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { fetchGeminiResponse } from "../api/gemini";
-import { getAllChats, saveChat } from "../db/db";
-import { Chat, LoadingState } from "../types/common";
+import { fetchGeminiResponse } from "@/api/gemini";
+import { getAllChats, saveChat, deleteChat } from "@/db/db";
+import { Chat, LoadingState } from "@/types/common";
 
 export const useChats = () => {
     const [chats, setChats] = useState<Chat[]>([]);
@@ -102,12 +102,27 @@ export const useChats = () => {
         }
     };
 
+    const removeChat = async (chatId: string) => {
+        try {
+            await deleteChat(chatId);
+            await fetchChats();
+            
+            // If the deleted chat was selected, clear the selection
+            if (selectedChat && selectedChat.id === chatId) {
+                setSelectedChat(null);
+            }
+        } catch (error) {
+            console.error("Error deleting chat:", error);
+        }
+    };
+
     return { 
         chats, 
         selectedChat,
         loadingState,
         selectChat, 
         createNewChat, 
-        sendMessage
+        sendMessage,
+        removeChat
     };
 };

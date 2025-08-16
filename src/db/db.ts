@@ -22,3 +22,8 @@ export const getAllChats = async () => {
     const db = await initDB();
     return await db.getAll(STORE_NAME);
 };
+
+export const deleteChat = async (chatId: string) => {
+    const db = await initDB();
+    await db.delete(STORE_NAME, chatId);
+};
