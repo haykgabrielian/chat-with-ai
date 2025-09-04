@@ -1,10 +1,13 @@
 import styled from 'styled-components';
 import { useState } from 'react';
+
+import { ChevronLeftIcon } from '@/components/icons';
 import { useChats } from '@/hooks/useChats';
+
 import ChatList from '@/components/ChatList';
 import ChatWindow from '@/components/ChatWindow';
-import { BACKGROUND_COLORS, TEXT_COLORS, BUTTON_COLORS } from '@/theme/colors';
-import { ChevronLeftIcon } from '@/components/icons';
+
+import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
 
 const Container = styled.div`
   display: flex;
@@ -19,7 +22,7 @@ const SidebarContainer = styled.div<{ isOpen: boolean }>`
 
 const ToggleButton = styled.button<{ isOpen: boolean }>`
   position: absolute;
-  top: 20px;
+  top: 5px;
   right: -40px;
   width: 40px;
   height: 40px;

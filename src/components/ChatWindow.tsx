@@ -1,22 +1,25 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import 'highlight.js/styles/monokai.css';
+
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import remarkBreaks from 'remark-breaks';
 import rehypeHighlight from 'rehype-highlight';
-import { Chat, Msg, LoadingState } from '@/types/common';
+import remarkBreaks from 'remark-breaks';
+import remarkGfm from 'remark-gfm';
+import styled from 'styled-components';
+
+import { Chat, LoadingState, Msg } from '@/types/common';
+import EmptyState from '@/components/EmptyState';
+
+import { LoginIcon, SendIcon } from '@/components/icons';
+
 import {
   BACKGROUND_COLORS,
-  TEXT_COLORS,
-  BORDER_COLORS,
-  INPUT_COLORS,
   BUTTON_COLORS,
+  INPUT_COLORS,
   MESSAGE_BUBBLE_COLORS,
   STATUS_COLORS,
+  TEXT_COLORS,
 } from '@/theme/colors';
-import { SendIcon } from '@/components/icons';
-import EmptyState from '@/components/EmptyState';
-import 'highlight.js/styles/monokai.css';
 
 type Props = {
   selectedChat: Chat | null;
@@ -26,28 +29,70 @@ type Props = {
 };
 
 const Container = styled.div`
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 0 150px;
   height: 100vh;
 `;
 
+const Content = styled.div`
+  flex-grow: 1;
+  overflow: scroll;
+  padding: 30px 200px 100px 200px;
+`;
+
 const Header = styled.div`
+  position: absolute;
+  top: 0;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 50px;
   min-height: 50px;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 8px;
-  border-bottom: 1px solid ${BORDER_COLORS.HEADER};
   color: ${TEXT_COLORS.PRIMARY};
+  z-index: 1;
+  backdrop-filter: blur(10px);
+`;
+
+const HeaderLeft = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const HeaderRight = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const LoginButton = styled.button`
+  background: none;
+  border: none;
+  color: ${TEXT_COLORS.PRIMARY};
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${BACKGROUND_COLORS.MESSAGE_AI};
+    color: ${TEXT_COLORS.WHITE};
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 const MessagesContainer = styled.div`
-  flex-grow: 1;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 `;
@@ -156,30 +201,12 @@ const Dot = styled.div<{ delay: number }>`
   }
 `;
 
-const NoMessage = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  p {
-    color: #cfcfcf;
-    font-size: 30px;
-  }
-`;
-
 const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  padding: 20px 0;
-  border-top: 1px solid #565869;
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-  max-width: 768px;
-  margin: 0 auto;
-  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 768px;
 `;
 
 const Input = styled.textarea`
@@ -359,59 +386,67 @@ const ChatWindow: React.FC<Props> = ({
 
   return (
     <Container>
-      {selectedChat && <Header>{selectedChat.name}</Header>}
-      <MessagesContainer>
-        {selectedChat ? (
-          <MessagesContent ref={messagesContentRef}>
-            {selectedChat.messages.map((msg: Msg, index: number) => (
-              <Message key={index} isSentByMe={msg.sender === 'Me'}>
-                <MarkdownWrapper>
-                  <ReactMarkdown
-                    remarkPlugins={[remarkGfm, remarkBreaks]}
-                    rehypePlugins={[rehypeHighlight]}
-                  >
-                    {msg.text}
-                  </ReactMarkdown>
-                </MarkdownWrapper>
-              </Message>
-            ))}
-            {loadingState.isLoading &&
-              loadingState.currentChatId === selectedChat.id && (
-                <TypingIndicator>
-                  <Dot delay={0} />
-                  <Dot delay={0.2} />
-                  <Dot delay={0.4} />
-                </TypingIndicator>
-              )}
-          </MessagesContent>
-        ) : (
-          <EmptyState />
-        )}
-      </MessagesContainer>
-
+      {selectedChat && (
+        <Header>
+          <HeaderLeft>{selectedChat.name}</HeaderLeft>
+          <HeaderRight>
+            <LoginButton title='Login'>
+              <LoginIcon />
+            </LoginButton>
+          </HeaderRight>
+        </Header>
+      )}
+      <Content ref={messagesContentRef}>
+        <MessagesContainer>
+          {selectedChat ? (
+            <MessagesContent>
+              {selectedChat.messages.map((msg: Msg, index: number) => (
+                <Message key={index} isSentByMe={msg.sender === 'Me'}>
+                  <MarkdownWrapper>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm, remarkBreaks]}
+                      rehypePlugins={[rehypeHighlight]}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </MarkdownWrapper>
+                </Message>
+              ))}
+              {loadingState.isLoading &&
+                loadingState.currentChatId === selectedChat.id && (
+                  <TypingIndicator>
+                    <Dot delay={0} />
+                    <Dot delay={0.2} />
+                    <Dot delay={0.4} />
+                  </TypingIndicator>
+                )}
+            </MessagesContent>
+          ) : (
+            <EmptyState />
+          )}
+        </MessagesContainer>
+      </Content>
       <InputContainer>
-        <InputWrapper>
-          <Input
-            ref={textareaRef}
-            value={message}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            placeholder={
-              loadingState.isLoading
-                ? 'ZruyC is thinking...'
-                : 'Message to ZruyC...'
-            }
-            rows={1}
-            disabled={loadingState.isLoading}
-          />
-          <SendButton
-            onClick={handleSend}
-            disabled={!message.trim() || loadingState.isLoading}
-            title='Send message'
-          >
-            <SendIcon />
-          </SendButton>
-        </InputWrapper>
+        <Input
+          ref={textareaRef}
+          value={message}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+          placeholder={
+            loadingState.isLoading
+              ? 'ZruyC is thinking...'
+              : 'Message to ZruyC...'
+          }
+          rows={1}
+          disabled={loadingState.isLoading}
+        />
+        <SendButton
+          onClick={handleSend}
+          disabled={!message.trim() || loadingState.isLoading}
+          title='Send message'
+        >
+          <SendIcon />
+        </SendButton>
       </InputContainer>
     </Container>
   );

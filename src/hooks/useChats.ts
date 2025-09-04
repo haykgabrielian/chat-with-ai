@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import { fetchGeminiResponse } from '@/api/gemini';
-import { getAllChats, saveChat, deleteChat } from '@/db/db';
+
+import { deleteChat, getAllChats, saveChat } from '@/db/db';
+
 import { Chat, LoadingState } from '@/types/common';
 
 export const useChats = () => {

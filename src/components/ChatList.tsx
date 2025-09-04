@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Chat } from '@/types/common';
-import { BACKGROUND_COLORS, TEXT_COLORS, BUTTON_COLORS } from '@/theme/colors';
+
 import { PlusIcon, TrashIcon } from '@/components/icons';
+import { Chat } from '@/types/common';
+
+import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
 
 type Props = {
   chats: Chat[];

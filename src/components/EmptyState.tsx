@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { TEXT_COLORS, BACKGROUND_COLORS, BUTTON_COLORS } from '@/theme/colors';
+
+import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
 
 const Container = styled.div`
   display: flex;
