@@ -5,7 +5,7 @@ interface TrashIconProps {
   className?: string;
 }
 
-const TrashIcon: React.FC<TrashIconProps> = ({ size = 14, className = '' }) => {
+const TrashIcon = ({ size = 14, className = '' }: TrashIconProps) => {
   return (
     <svg
       viewBox='0 0 24 24'

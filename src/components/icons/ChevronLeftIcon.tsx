@@ -5,10 +5,10 @@ interface ChevronLeftIconProps {
   className?: string;
 }
 
-const ChevronLeftIcon: React.FC<ChevronLeftIconProps> = ({
+const ChevronLeftIcon = ({
   size = 20,
   className = '',
-}) => {
+}: ChevronLeftIconProps) => {
   return (
     <svg
       viewBox='0 0 24 24'

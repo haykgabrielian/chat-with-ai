@@ -93,7 +93,7 @@ const FeatureDescription = styled.p`
   line-height: 1.4;
 `;
 
-const EmptyState: React.FC = () => {
+const EmptyState = () => {
   return (
     <Container>
       <IconContainer>

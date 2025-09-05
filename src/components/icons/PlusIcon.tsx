@@ -5,7 +5,7 @@ interface PlusIconProps {
   className?: string;
 }
 
-const PlusIcon: React.FC<PlusIconProps> = ({ size = 16, className = '' }) => {
+const PlusIcon = ({ size = 16, className = '' }: PlusIconProps) => {
   return (
     <svg
       viewBox='0 0 16 16'

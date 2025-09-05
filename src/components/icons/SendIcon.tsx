@@ -5,7 +5,7 @@ interface SendIconProps {
   className?: string;
 }
 
-const SendIcon: React.FC<SendIconProps> = ({ size = 16, className = '' }) => {
+const SendIcon = ({ size = 16, className = '' }: SendIconProps) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'

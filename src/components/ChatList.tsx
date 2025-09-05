@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { PlusIcon, TrashIcon } from '@/components/icons';
+import { TrashIcon, LoginIcon, UserIcon } from '@/components/icons';
 import { Chat } from '@/types/common';
 
 import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
@@ -14,35 +14,22 @@ type Props = {
 };
 
 const Container = styled.div`
-  width: 300px;
-  background-color: ${BACKGROUND_COLORS.SIDEBAR};
-  height: 100vh;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  padding: 80px 10px 0 10px;
+  background-color: ${BACKGROUND_COLORS.SIDEBAR};
 `;
 
 const Header = styled.div`
-  padding: 10px;
   flex-shrink: 0;
-`;
-
-const Title = styled.h2`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 10px 0;
-  padding: 0 12px;
-  font-size: 1.125rem;
-  font-weight: bold;
-  text-align: left;
-  color: ${TEXT_COLORS.PRIMARY};
 `;
 
 const ChatListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
-  padding-top: 8px;
+  padding-top: 20px;
 `;
 
 const List = styled.ul`
@@ -109,18 +96,46 @@ const ChatItemContainer = styled.div`
 `;
 
 const NewChatButton = styled.button`
-  background-color: ${BUTTON_COLORS.PRIMARY};
-  color: ${TEXT_COLORS.WHITE};
-  border: none;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+  background-color: ${BUTTON_COLORS.PRIMARY};
+  color: ${TEXT_COLORS.WHITE};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
   transition: background-color 0.2s ease;
-  width: 22px;
-  height: 22px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 8px;
+
+  &:hover {
+    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+  }
+`;
+
+const Footer = styled.div`
+  padding: 20px 0;
+  flex-shrink: 0;
+`;
+
+const LoginButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+  background-color: ${BUTTON_COLORS.PRIMARY};
+  color: ${TEXT_COLORS.WHITE};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 8px;
 
   &:hover {
     background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
@@ -129,7 +144,34 @@ const NewChatButton = styled.button`
   svg {
     width: 16px;
     height: 16px;
-    fill: currentColor;
+    stroke: currentColor;
+  }
+`;
+
+const UserButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 10px 0;
+  background-color: ${BUTTON_COLORS.PRIMARY};
+  color: ${TEXT_COLORS.WHITE};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  gap: 8px;
+
+  &:hover {
+    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
   }
 `;
 
@@ -139,26 +181,29 @@ const NoChatsMessage = styled.p`
   margin-top: 20px;
 `;
 
-const ChatList: React.FC<Props> = ({
+const ChatList = ({
   chats,
   selectedChatId,
   selectChat,
   removeChat,
-}) => {
+}: Props) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     removeChat(chatId);
   };
 
+  const handleLogin = () => {
+    setIsLoggedIn(!isLoggedIn);
+  };
+
   return (
     <Container>
       <Header>
-        <Title>
-          <p>Chats</p>
-          <NewChatButton onClick={() => selectChat(null)} title='New Chat'>
-            <PlusIcon />
-          </NewChatButton>
-        </Title>
+        <NewChatButton onClick={() => selectChat(null)}>
+          New Chat
+        </NewChatButton>
       </Header>
       <ChatListContainer>
         <List>
@@ -190,6 +235,19 @@ const ChatList: React.FC<Props> = ({
           )}
         </List>
       </ChatListContainer>
+      <Footer>
+        {isLoggedIn ? (
+          <UserButton onClick={handleLogin}>
+            <UserIcon size={16} />
+            John Doe
+          </UserButton>
+        ) : (
+          <LoginButton onClick={handleLogin}>
+            <LoginIcon size={16} />
+            Login
+          </LoginButton>
+        )}
+      </Footer>
     </Container>
   );
 };
