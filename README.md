@@ -59,12 +59,22 @@ src/
 │   │   ├── PlusIcon.tsx # New chat icon
 │   │   ├── TrashIcon.tsx # Delete chat icon
 │   │   ├── ChevronLeftIcon.tsx # Sidebar toggle icon
-│   │   └── SendIcon.tsx # Send message icon
-│   ├── ChatList.tsx     # Sidebar with chat management
+│   │   ├── SendIcon.tsx # Send message icon
+│   │   ├── HamburgerIcon.tsx # Mobile menu toggle
+│   │   ├── LoginIcon.tsx # User authentication
+│   │   ├── UserIcon.tsx # User profile
+│   │   ├── SearchIcon.tsx # Search functionality
+│   │   ├── CloseIcon.tsx # Close/clear actions
+│   │   └── ChatIcon.tsx # Chat/conversation icon
+│   ├── ChatList.tsx     # Sidebar with chat management & search
 │   ├── ChatWindow.tsx   # Main chat interface
-│   └── EmptyState.tsx   # Welcome screen component
+│   ├── ChatInput.tsx    # Message input component
+│   ├── Header.tsx       # Application header
+│   ├── EmptyState.tsx   # Welcome screen component
+│   ├── Search.tsx       # Search input component
+│   └── SidebarContainer.tsx # Sidebar wrapper with toggle
 ├── hooks/
-│   └── useChats.ts      # Chat state management
+│   └── useChats.ts      # Chat state management with search
 ├── api/
 │   └── gemini.ts        # Gemini API integration
 ├── db/
@@ -74,9 +84,12 @@ src/
 ├── types/
 │   └── common.ts       # TypeScript type definitions
 ├── pages/
-│   └── Home.tsx        # Main application page
+│   ├── Home.tsx        # Main application page
+│   ├── About.tsx       # About page
+│   └── NotFound.tsx    # 404 error page
 ├── assets/
-│   └── zruyc_logo.svg  # Application logo
+│   ├── zruyc_logo.svg  # Application logo
+│   └── react.svg       # React logo
 ├── main.tsx            # Application entry point
 ├── router.tsx          # Routing configuration
 └── main.css            # Global styles
