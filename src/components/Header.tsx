@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { LoginIcon } from '@/components/icons';
+
 import { BACKGROUND_COLORS, TEXT_COLORS } from '@/theme/colors';
 
 type Props = {
@@ -64,7 +65,7 @@ const Header = ({ chatName, onLoginClick }: Props) => {
     <HeaderContainer>
       <HeaderLeft>{chatName}</HeaderLeft>
       <HeaderRight>
-        <LoginButton title="Login" onClick={onLoginClick}>
+        <LoginButton title='Login' onClick={onLoginClick}>
           <LoginIcon />
         </LoginButton>
       </HeaderRight>

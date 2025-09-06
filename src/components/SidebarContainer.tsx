@@ -2,10 +2,11 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { HamburgerIcon } from '@/components/icons';
-import ChatList from '@/components/ChatList';
-import { Chat } from '@/types/common';
 
-import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { Chat } from '@/types/common';
+import ChatList from '@/components/ChatList';
+
+import { BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
 
 type Props = {
   isOpen: boolean;

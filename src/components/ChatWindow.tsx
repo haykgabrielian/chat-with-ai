@@ -1,6 +1,6 @@
 import 'highlight.js/styles/monokai.css';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
@@ -8,9 +8,8 @@ import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
 
 import { Chat, LoadingState, Msg } from '@/types/common';
-import EmptyState from '@/components/EmptyState';
-import Header from '@/components/Header';
 import ChatInput from '@/components/ChatInput';
+import EmptyState from '@/components/EmptyState';
 
 import {
   BACKGROUND_COLORS,
@@ -38,7 +37,6 @@ const Content = styled.div`
   overflow: scroll;
   padding: 20px 200px 100px 200px;
 `;
-
 
 const MessagesContainer = styled.div`
   display: flex;
@@ -148,7 +146,6 @@ const Dot = styled.div<{ delay: number }>`
     }
   }
 `;
-
 
 const MarkdownWrapper = styled.div`
   font-size: 0.875rem;

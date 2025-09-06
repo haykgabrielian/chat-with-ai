@@ -2,7 +2,13 @@ import React, { useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { SendIcon } from '@/components/icons';
-import { BUTTON_COLORS, INPUT_COLORS, STATUS_COLORS, TEXT_COLORS } from '@/theme/colors';
+
+import {
+  BUTTON_COLORS,
+  INPUT_COLORS,
+  STATUS_COLORS,
+  TEXT_COLORS,
+} from '@/theme/colors';
 
 type Props = {
   onSendMessage: (message: string) => void;
@@ -63,7 +69,11 @@ const SendButton = styled.button`
   }
 `;
 
-const ChatInput = ({ onSendMessage, isLoading, placeholder = 'Message to ZruyC...' }: Props) => {
+const ChatInput = ({
+  onSendMessage,
+  isLoading,
+  placeholder = 'Message to ZruyC...',
+}: Props) => {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 

@@ -3,8 +3,8 @@ import { useState } from 'react';
 
 import { useChats } from '@/hooks/useChats';
 
-import SidebarContainer from '@/components/SidebarContainer';
 import ChatWindow from '@/components/ChatWindow';
+import SidebarContainer from '@/components/SidebarContainer';
 
 const Container = styled.div`
   display: flex;

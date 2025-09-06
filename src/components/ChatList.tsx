@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 
-import { TrashIcon, LoginIcon, UserIcon } from '@/components/icons';
+import { ChatIcon, LoginIcon, TrashIcon, UserIcon } from '@/components/icons';
+
 import { Chat } from '@/types/common';
+import Search from '@/components/Search';
 
 import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
 
@@ -175,19 +177,72 @@ const UserButton = styled.button`
   }
 `;
 
-const NoChatsMessage = styled.p`
-  color: ${TEXT_COLORS.PRIMARY};
+const NoChatsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
   text-align: center;
-  margin-top: 20px;
+  min-height: 200px;
 `;
 
-const ChatList = ({
-  chats,
-  selectedChatId,
-  selectChat,
-  removeChat,
-}: Props) => {
+const NoChatsIcon = styled.div`
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: ${BUTTON_COLORS.PRIMARY};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  color: ${TEXT_COLORS.WHITE};
+`;
+
+const NoChatsTitle = styled.h3`
+  color: ${TEXT_COLORS.PRIMARY};
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+`;
+
+const NoChatsMessage = styled.p`
+  color: ${TEXT_COLORS.SECONDARY};
+  font-size: 0.875rem;
+  margin: 0;
+  line-height: 1.5;
+`;
+
+const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 800);
+    return () => clearTimeout(handler);
+  }, [query]);
+
+  const filteredChats = useMemo(() => {
+    return [...chats]
+      .filter(chat =>
+        chat.name.toLowerCase().includes(debouncedQuery.toLowerCase())
+      )
+      .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''));
+  }, [chats, debouncedQuery]);
+
+  const handleSearchChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+    },
+    []
+  );
+
+  const handleSearchClear = useCallback(() => {
+    setQuery('');
+  }, []);
 
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
@@ -201,14 +256,17 @@ const ChatList = ({
   return (
     <Container>
       <Header>
-        <NewChatButton onClick={() => selectChat(null)}>
-          New Chat
-        </NewChatButton>
+        <NewChatButton onClick={() => selectChat(null)}>New Chat</NewChatButton>
+        <Search
+          query={query}
+          onChange={handleSearchChange}
+          onClear={handleSearchClear}
+        />
       </Header>
       <ChatListContainer>
         <List>
-          {chats.length > 0 ? (
-            [...chats]
+          {filteredChats.length > 0 ? (
+            [...filteredChats]
               .sort((a, b) =>
                 (b.timestamp ?? '').localeCompare(a.timestamp ?? '')
               )
@@ -229,9 +287,16 @@ const ChatList = ({
                 </ChatItemContainer>
               ))
           ) : (
-            <NoChatsMessage>
-              No chats available. Start a new one!
-            </NoChatsMessage>
+            <NoChatsContainer>
+              <NoChatsIcon>
+                <ChatIcon size={24} />
+              </NoChatsIcon>
+              <NoChatsTitle>No chats Found</NoChatsTitle>
+              <NoChatsMessage>
+                Start a conversation by clicking "New Chat" above or send a
+                message.
+              </NoChatsMessage>
+            </NoChatsContainer>
           )}
         </List>
       </ChatListContainer>

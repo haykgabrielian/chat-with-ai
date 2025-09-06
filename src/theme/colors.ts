@@ -2,8 +2,8 @@
 export const BACKGROUND_COLORS = {
   PRIMARY: '#424242', // Main app background
   SIDEBAR: '#40414f', // Sidebar background
-  CHAT_ITEM_HOVER: '#1b1b22', // Chat item hover state
-  CHAT_ITEM_SELECTED: '#1b1b22', // Selected chat item
+  CHAT_ITEM_HOVER: '#565969', // Chat item hover state
+  CHAT_ITEM_SELECTED: '#565969', // Selected chat item
   MESSAGE_AI: '#4e4e4e', // AI message background
   MESSAGE_USER: '#0d8f6f', // User message background
   TYPING_INDICATOR: '#4e4e4e', // Typing indicator background
