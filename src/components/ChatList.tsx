@@ -41,17 +41,18 @@ const List = styled.ul`
 `;
 
 const ChatItem = styled.li<{ isSelected: boolean }>`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 8px 12px;
   margin-bottom: 5px;
   cursor: pointer;
   color: ${TEXT_COLORS.PRIMARY};
   border-radius: 10px;
   text-align: left;
+  transition: background-color 0.3s ease;
   background-color: ${props =>
     props.isSelected ? BACKGROUND_COLORS.CHAT_ITEM_SELECTED : 'transparent'};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   &:hover {
     background-color: ${BACKGROUND_COLORS.CHAT_ITEM_HOVER};
   }

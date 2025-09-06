@@ -21,7 +21,8 @@ const InputContainer = styled.div`
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  width: 768px;
+  width: 920px;
+  z-index: 5;
 `;
 
 const Input = styled.textarea`

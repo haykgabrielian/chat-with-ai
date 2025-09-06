@@ -35,27 +35,24 @@ const Container = styled.div`
 const Content = styled.div`
   flex-grow: 1;
   overflow: scroll;
-  padding: 20px 200px 100px 200px;
+  padding-bottom: 100px;
 `;
 
 const MessagesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const MessagesContent = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 10px 16px;
+  width: 950px;
+  margin: 0 auto;
 `;
 
 const Message = styled.div<{ isSentByMe: boolean }>`
     position: relative;
     width: max-content;
-    max-width: 900px;
+    max-width: 850px;
     background-color: ${props => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
     color: ${TEXT_COLORS.PRIMARY};
     margin-left: ${props => (props.isSentByMe ? 'auto' : 'unset')};
@@ -184,7 +181,7 @@ const MarkdownWrapper = styled.div`
 
   pre {
     background: rgba(0, 0, 0, 0.2);
-    padding: 1em;
+    padding: 4px;
     border-radius: 8px;
     overflow-x: auto;
     font-size: 0.8rem;
@@ -201,7 +198,7 @@ const MarkdownWrapper = styled.div`
 
   th,
   td {
-    border: 1px solid #aaa;
+    border: 1px solid #666;
     padding: 0.5rem;
     text-align: left;
   }
@@ -257,9 +254,8 @@ const ChatWindow = ({
   return (
     <Container>
       <Content ref={messagesContentRef}>
-        <MessagesContainer>
           {selectedChat ? (
-            <MessagesContent>
+            <MessagesContainer>
               {selectedChat.messages.map((msg: Msg, index: number) => (
                 <Message key={index} isSentByMe={msg.sender === 'Me'}>
                   <MarkdownWrapper>
@@ -280,11 +276,10 @@ const ChatWindow = ({
                     <Dot delay={0.4} />
                   </TypingIndicator>
                 )}
-            </MessagesContent>
+            </MessagesContainer>
           ) : (
             <EmptyState />
           )}
-        </MessagesContainer>
       </Content>
       <ChatInput
         onSendMessage={handleSendMessage}
