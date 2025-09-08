@@ -254,32 +254,33 @@ const ChatWindow = ({
   return (
     <Container>
       <Content ref={messagesContentRef}>
-          {selectedChat ? (
-            <MessagesContainer>
-              {selectedChat.messages.map((msg: Msg, index: number) => (
-                <Message key={index} isSentByMe={msg.sender === 'Me'}>
-                  <MarkdownWrapper>
-                    <ReactMarkdown
-                      remarkPlugins={[remarkGfm, remarkBreaks]}
-                      rehypePlugins={[rehypeHighlight]}
-                    >
-                      {msg.text}
-                    </ReactMarkdown>
-                  </MarkdownWrapper>
-                </Message>
-              ))}
-              {loadingState.isLoading &&
-                loadingState.currentChatId === selectedChat.id && (
-                  <TypingIndicator>
-                    <Dot delay={0} />
-                    <Dot delay={0.2} />
-                    <Dot delay={0.4} />
-                  </TypingIndicator>
-                )}
-            </MessagesContainer>
-          ) : (
-            <EmptyState />
-          )}
+        {selectedChat ? (
+          <MessagesContainer>
+            {selectedChat.messages.map((msg: Msg, index: number) => (
+              <Message key={index} isSentByMe={msg.sender === 'Me'}>
+                <MarkdownWrapper>
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                    rehypePlugins={[rehypeHighlight]}
+                  >
+                    {msg.text}
+                  </ReactMarkdown>
+                </MarkdownWrapper>
+              </Message>
+            ))}
+            {loadingState.isLoading &&
+              !loadingState.isStreaming &&
+              loadingState.currentChatId === selectedChat.id && (
+                <TypingIndicator>
+                  <Dot delay={0} />
+                  <Dot delay={0.2} />
+                  <Dot delay={0.4} />
+                </TypingIndicator>
+              )}
+          </MessagesContainer>
+        ) : (
+          <EmptyState />
+        )}
       </Content>
       <ChatInput
         onSendMessage={handleSendMessage}

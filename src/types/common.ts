@@ -13,4 +13,5 @@ export type Chat = {
 export type LoadingState = {
   isLoading: boolean;
   currentChatId?: string;
+  isStreaming?: boolean;
 };

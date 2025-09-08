@@ -44,14 +44,49 @@ export const useChats = () => {
 
     await saveChat(newChat);
     await fetchChats();
-    setSelectedChat(newChat);
 
-    // Set loading state
-    setLoadingState({ isLoading: true, currentChatId: newChat.id });
+    setLoadingState({
+      isLoading: true,
+      currentChatId: newChat.id,
+      isStreaming: false,
+    });
+    setSelectedChat({ ...newChat });
 
     try {
-      const geminiReply = await fetchGeminiResponse(newChat.messages);
-      newChat.messages.push({ sender: 'Gemini', text: geminiReply });
+      let fullResponse = '';
+      const geminiReply = await fetchGeminiResponse(
+        newChat.messages,
+        (chunk: string) => {
+          if (!fullResponse && chunk) {
+            setLoadingState({
+              isLoading: true,
+              currentChatId: newChat.id,
+              isStreaming: true,
+            });
+            newChat.messages.push({
+              sender: 'Gemini',
+              text: '',
+            });
+          }
+          fullResponse += chunk;
+
+          const updatedChat = {
+            ...newChat,
+            messages: newChat.messages.map((msg, index) =>
+              index === newChat.messages.length - 1
+                ? { ...msg, text: fullResponse }
+                : msg
+            ),
+          };
+
+          setSelectedChat(updatedChat);
+        }
+      );
+
+      newChat.messages[newChat.messages.length - 1] = {
+        sender: 'Gemini',
+        text: fullResponse || geminiReply,
+      };
       newChat.timestamp = new Date().toISOString();
 
       await saveChat(newChat);
@@ -59,16 +94,16 @@ export const useChats = () => {
       setSelectedChat(newChat);
     } catch (error) {
       console.error('Error getting response:', error);
-      newChat.messages.push({
+      newChat.messages[newChat.messages.length - 1] = {
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
-      });
+      };
       newChat.timestamp = new Date().toISOString();
       await saveChat(newChat);
       await fetchChats();
       setSelectedChat(newChat);
     } finally {
-      setLoadingState({ isLoading: false });
+      setLoadingState({ isLoading: false, isStreaming: false });
     }
   };
 
@@ -85,14 +120,46 @@ export const useChats = () => {
 
     await saveChat(updatedChat);
     await fetchChats();
-    setSelectedChat(updatedChat);
-
-    // Set loading state
-    setLoadingState({ isLoading: true, currentChatId: selectedChat.id });
+    setLoadingState({
+      isLoading: true,
+      currentChatId: selectedChat.id,
+      isStreaming: false,
+    });
+    setSelectedChat({ ...updatedChat });
 
     try {
-      const geminiReply = await fetchGeminiResponse(updatedChat.messages);
-      updatedChat.messages.push({ sender: 'Gemini', text: geminiReply });
+      let fullResponse = '';
+      const geminiReply = await fetchGeminiResponse(
+        updatedChat.messages,
+        (chunk: string) => {
+          if (!fullResponse && chunk) {
+            setLoadingState({
+              isLoading: true,
+              currentChatId: selectedChat.id,
+              isStreaming: true,
+            });
+            updatedChat.messages.push({
+              sender: 'Gemini',
+              text: '',
+            });
+          }
+          fullResponse += chunk;
+          const realTimeChat = {
+            ...updatedChat,
+            messages: updatedChat.messages.map((msg, index) =>
+              index === updatedChat.messages.length - 1
+                ? { ...msg, text: fullResponse }
+                : msg
+            ),
+          };
+          setSelectedChat(realTimeChat);
+        }
+      );
+
+      updatedChat.messages[updatedChat.messages.length - 1] = {
+        sender: 'Gemini',
+        text: fullResponse || geminiReply,
+      };
       updatedChat.timestamp = new Date().toISOString();
 
       await saveChat(updatedChat);
@@ -100,16 +167,16 @@ export const useChats = () => {
       setSelectedChat(updatedChat);
     } catch (error) {
       console.error('Error getting response:', error);
-      updatedChat.messages.push({
+      updatedChat.messages[updatedChat.messages.length - 1] = {
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
-      });
+      };
       updatedChat.timestamp = new Date().toISOString();
       await saveChat(updatedChat);
       await fetchChats();
       setSelectedChat(updatedChat);
     } finally {
-      setLoadingState({ isLoading: false });
+      setLoadingState({ isLoading: false, isStreaming: false });
     }
   };
 
@@ -118,7 +185,6 @@ export const useChats = () => {
       await deleteChat(chatId);
       await fetchChats();
 
-      // If the deleted chat was selected, clear the selection
       if (selectedChat && selectedChat.id === chatId) {
         setSelectedChat(null);
       }
