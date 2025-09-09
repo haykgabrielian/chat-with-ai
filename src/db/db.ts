@@ -31,3 +31,12 @@ export const deleteChat = async (chatId: string) => {
   const db = await initDB();
   await db.delete(STORE_NAME, chatId);
 };
+
+export const updateChatTitle = async (chatId: string, newTitle: string) => {
+  const db = await initDB();
+  const chat = await db.get(STORE_NAME, chatId);
+  if (chat) {
+    chat.name = newTitle;
+    await db.put(STORE_NAME, chat);
+  }
+};

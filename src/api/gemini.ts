@@ -12,11 +12,14 @@ export const fetchGeminiResponse = async (
     parts: [{ text: msg.text }],
   }));
 
-  const res = await fetch(`${API_URL}?key=${API_KEY}&alt=sse`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents }),
-  });
+  const res = await fetch(
+    `${API_URL}streamGenerateContent?key=${API_KEY}&alt=sse`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error(`HTTP error! status: ${res.status}`);
@@ -69,4 +72,31 @@ export const fetchGeminiResponse = async (
   }
 
   return fullResponse;
+};
+
+export const generateChatTitle = async (
+  firstMessage: string
+): Promise<string> => {
+  const prompt = `Summarize the following conversation in 5 words no markdown or fewer to use as a title: ${firstMessage}`;
+
+  const contents = [
+    {
+      role: 'user',
+      parts: [{ text: prompt }],
+    },
+  ];
+
+  const res = await fetch(`${API_URL}generateContent?key=${API_KEY}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ contents }),
+  });
+
+  if (!res.ok) {
+    throw new Error(`HTTP error! status: ${res.status}`);
+  }
+
+  const data = await res.json();
+
+  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { fetchGeminiResponse } from '@/api/gemini';
+import { fetchGeminiResponse, generateChatTitle } from '@/api/gemini';
 
-import { deleteChat, getAllChats, saveChat } from '@/db/db';
+import { deleteChat, getAllChats, saveChat, updateChatTitle } from '@/db/db';
 
 import { Chat, LoadingState } from '@/types/common';
 
@@ -27,6 +27,7 @@ export const useChats = () => {
   };
 
   const createNewChat = async (message: string) => {
+    console.log('createNewChat');
     if (!message.trim() || loadingState.isLoading) return;
 
     const getFirstFourWords = (sentence: string) => {
@@ -43,7 +44,7 @@ export const useChats = () => {
     };
 
     await saveChat(newChat);
-    await fetchChats();
+    setChats(prevChats => [...prevChats, newChat]);
 
     setLoadingState({
       isLoading: true,
@@ -90,8 +91,28 @@ export const useChats = () => {
       newChat.timestamp = new Date().toISOString();
 
       await saveChat(newChat);
-      await fetchChats();
       setSelectedChat(newChat);
+
+      try {
+        const generatedTitle = await generateChatTitle(message);
+        updateChatTitle(newChat.id, generatedTitle)
+          .then(() => {
+            setChats(prevChats =>
+              prevChats.map(chat =>
+                chat.id === newChat.id
+                  ? { ...chat, name: generatedTitle }
+                  : chat
+              )
+            );
+            newChat.name = generatedTitle;
+            setSelectedChat(newChat);
+          })
+          .catch(error => {
+            console.error('Error updating chat title:', error);
+          });
+      } catch (error) {
+        console.error('Error generating title:', error);
+      }
     } catch (error) {
       console.error('Error getting response:', error);
       newChat.messages[newChat.messages.length - 1] = {
@@ -100,7 +121,9 @@ export const useChats = () => {
       };
       newChat.timestamp = new Date().toISOString();
       await saveChat(newChat);
-      await fetchChats();
+      setChats(prevChats =>
+        prevChats.map(chat => (chat.id === newChat.id ? newChat : chat))
+      );
       setSelectedChat(newChat);
     } finally {
       setLoadingState({ isLoading: false, isStreaming: false });
@@ -108,6 +131,7 @@ export const useChats = () => {
   };
 
   const sendMessage = async (message: string) => {
+    console.log('sendMessage');
     if (!selectedChat || loadingState.isLoading) return;
 
     const now = new Date().toISOString();
@@ -119,7 +143,9 @@ export const useChats = () => {
     };
 
     await saveChat(updatedChat);
-    await fetchChats();
+    setChats(prevChats =>
+      prevChats.map(chat => (chat.id === selectedChat.id ? updatedChat : chat))
+    );
     setLoadingState({
       isLoading: true,
       currentChatId: selectedChat.id,
@@ -163,7 +189,11 @@ export const useChats = () => {
       updatedChat.timestamp = new Date().toISOString();
 
       await saveChat(updatedChat);
-      await fetchChats();
+      setChats(prevChats =>
+        prevChats.map(chat =>
+          chat.id === selectedChat.id ? updatedChat : chat
+        )
+      );
       setSelectedChat(updatedChat);
     } catch (error) {
       console.error('Error getting response:', error);
@@ -173,7 +203,11 @@ export const useChats = () => {
       };
       updatedChat.timestamp = new Date().toISOString();
       await saveChat(updatedChat);
-      await fetchChats();
+      setChats(prevChats =>
+        prevChats.map(chat =>
+          chat.id === selectedChat.id ? updatedChat : chat
+        )
+      );
       setSelectedChat(updatedChat);
     } finally {
       setLoadingState({ isLoading: false, isStreaming: false });
@@ -181,16 +215,17 @@ export const useChats = () => {
   };
 
   const removeChat = async (chatId: string) => {
-    try {
-      await deleteChat(chatId);
-      await fetchChats();
+    deleteChat(chatId)
+      .then(() => {
+        setChats(prevChats => prevChats.filter(chat => chat.id !== chatId));
 
-      if (selectedChat && selectedChat.id === chatId) {
-        setSelectedChat(null);
-      }
-    } catch (error) {
-      console.error('Error deleting chat:', error);
-    }
+        if (selectedChat && selectedChat.id === chatId) {
+          setSelectedChat(null);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting chat:', error);
+      });
   };
 
   return {
