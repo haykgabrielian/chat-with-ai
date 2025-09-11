@@ -27,7 +27,6 @@ export const useChats = () => {
   };
 
   const createNewChat = async (message: string) => {
-    console.log('createNewChat');
     if (!message.trim() || loadingState.isLoading) return;
 
     const getFirstFourWords = (sentence: string) => {
@@ -115,10 +114,10 @@ export const useChats = () => {
       }
     } catch (error) {
       console.error('Error getting response:', error);
-      newChat.messages[newChat.messages.length - 1] = {
+      newChat.messages.push({
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
-      };
+      });
       newChat.timestamp = new Date().toISOString();
       await saveChat(newChat);
       setChats(prevChats =>
@@ -131,7 +130,6 @@ export const useChats = () => {
   };
 
   const sendMessage = async (message: string) => {
-    console.log('sendMessage');
     if (!selectedChat || loadingState.isLoading) return;
 
     const now = new Date().toISOString();
@@ -197,10 +195,10 @@ export const useChats = () => {
       setSelectedChat(updatedChat);
     } catch (error) {
       console.error('Error getting response:', error);
-      updatedChat.messages[updatedChat.messages.length - 1] = {
+      updatedChat.messages.push({
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
-      };
+      });
       updatedChat.timestamp = new Date().toISOString();
       await saveChat(updatedChat);
       setChats(prevChats =>
