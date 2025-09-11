@@ -1,6 +1,4 @@
-export { default as PlusIcon } from './PlusIcon';
 export { default as TrashIcon } from './TrashIcon';
-export { default as ChevronLeftIcon } from './ChevronLeftIcon';
 export { default as LoginIcon } from './LoginIcon';
 export { default as SendIcon } from './SendIcon';
 export { default as HamburgerIcon } from './HamburgerIcon';
@@ -8,3 +6,5 @@ export { default as UserIcon } from './UserIcon';
 export { default as SearchIcon } from './SearchIcon';
 export { default as CloseIcon } from './CloseIcon';
 export { default as ChatIcon } from './ChatIcon';
+export { default as LogoIcon } from './LogoIcon';
+export { default as GoogleIcon } from './GoogleIcon';

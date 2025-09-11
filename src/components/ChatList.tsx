@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { useNavigate } from '@tanstack/react-router';
 
 import { ChatIcon, LoginIcon, TrashIcon, UserIcon } from '@/components/icons';
 
@@ -215,6 +216,7 @@ const NoChatsMessage = styled.p`
 `;
 
 const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
+  const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -251,7 +253,8 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(!isLoggedIn);
+    setIsLoggedIn(false);
+    navigate({ to: '/authentication' });
   };
 
   return (

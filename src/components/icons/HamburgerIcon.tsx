@@ -4,7 +4,7 @@ interface HamburgerIconProps {
   isOpen?: boolean;
 }
 
-const HamburgerIcon: React.FC<HamburgerIconProps> = ({ isOpen = false }) => {
+const HamburgerIcon = ({ isOpen = false }: HamburgerIconProps) => {
   return (
     <svg
       width='24'

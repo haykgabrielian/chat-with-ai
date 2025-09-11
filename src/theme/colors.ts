@@ -24,12 +24,6 @@ export const BUTTON_COLORS = {
   DELETE_BG_HOVER: 'rgba(255, 107, 107, 0.1)', // Delete button background hover
 } as const;
 
-// Border colors
-export const BORDER_COLORS = {
-  HEADER: '#636363', // Header border
-  SIDEBAR_HEADER: '#565969', // Sidebar header border
-} as const;
-
 // Message bubble colors
 export const MESSAGE_BUBBLE_COLORS = {
   AI_BORDER: '#4e4e4e', // AI message border

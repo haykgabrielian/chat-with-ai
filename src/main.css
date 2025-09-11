@@ -80,6 +80,12 @@ img {
 button {
   all: unset;
   cursor: pointer;
+}
+
+button,
+input,
+select,
+textarea {
   outline: none;
 }
 

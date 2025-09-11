@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router';
 
 import About from '@/pages/About';
+import Authentication from '@/pages/Authentication';
 import Home from '@/pages/Home';
 import NotFound from '@/pages/NotFound';
 
@@ -30,7 +31,17 @@ const AboutRoute = createRoute({
   component: About,
 });
 
-const routeTree = rootRoute.addChildren([AboutRoute, HomeRoute]);
+const AuthenticationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/authentication',
+  component: Authentication,
+});
+
+const routeTree = rootRoute.addChildren([
+  AboutRoute,
+  HomeRoute,
+  AuthenticationRoute,
+]);
 
 const router = createRouter({ routeTree });
 
