@@ -35,7 +35,7 @@ const SearchIconContainer = styled.div`
   pointer-events: none;
 `;
 
-const ClearButton = styled.button<{ show: boolean }>`
+const ClearButton = styled.button<{ $show: boolean }>`
   position: absolute;
   right: 8px;
   top: 50%;
@@ -46,7 +46,7 @@ const ClearButton = styled.button<{ show: boolean }>`
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
-  display: ${props => (props.show ? 'flex' : 'none')};
+  display: ${props => (props.$show ? 'flex' : 'none')};
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
@@ -86,7 +86,7 @@ const Search = ({
         placeholder={placeholder}
       />
       <ClearButton
-        show={query.length > 0}
+        $show={query.length > 0}
         onClick={onClear}
         title='Clear search'
       >

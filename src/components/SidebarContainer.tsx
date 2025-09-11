@@ -17,14 +17,14 @@ type Props = {
   toggleSidebar: () => void;
 };
 
-const Container = styled.div<{ isOpen: boolean }>`
+const Container = styled.div<{ $isOpen: boolean }>`
   width: 250px;
   transition: margin-left 0.2s ease;
-  margin-left: ${props => (props.isOpen ? '0' : '-250px')};
+  margin-left: ${props => (props.$isOpen ? '0' : '-250px')};
   position: relative;
 `;
 
-const HamburgerButton = styled.button<{ isOpen: boolean }>`
+const HamburgerButton = styled.button<{ $isOpen: boolean }>`
   position: fixed;
   top: 20px;
   left: 10px;
@@ -62,8 +62,8 @@ const SidebarContainer = ({
   toggleSidebar,
 }: Props) => {
   return (
-    <Container isOpen={isOpen}>
-      <HamburgerButton onClick={toggleSidebar} isOpen={isOpen}>
+    <Container $isOpen={isOpen}>
+      <HamburgerButton onClick={toggleSidebar} $isOpen={isOpen}>
         <HamburgerIcon isOpen={isOpen} />
       </HamburgerButton>
       <ChatList

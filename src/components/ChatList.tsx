@@ -40,7 +40,7 @@ const List = styled.ul`
   margin: 0;
 `;
 
-const ChatItem = styled.li<{ isSelected: boolean }>`
+const ChatItem = styled.li<{ $isSelected: boolean }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -52,7 +52,7 @@ const ChatItem = styled.li<{ isSelected: boolean }>`
   text-align: left;
   transition: background-color 0.3s ease;
   background-color: ${props =>
-    props.isSelected ? BACKGROUND_COLORS.CHAT_ITEM_SELECTED : 'transparent'};
+    props.$isSelected ? BACKGROUND_COLORS.CHAT_ITEM_SELECTED : 'transparent'};
   &:hover {
     background-color: ${BACKGROUND_COLORS.CHAT_ITEM_HOVER};
   }
@@ -275,7 +275,7 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
                 <ChatItemContainer key={chat.id}>
                   <ChatItem
                     onClick={() => selectChat(chat)}
-                    isSelected={chat.id === selectedChatId}
+                    $isSelected={chat.id === selectedChatId}
                   >
                     <ChatName>{chat.name}</ChatName>
                     <DeleteButton

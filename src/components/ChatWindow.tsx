@@ -44,13 +44,13 @@ const MessagesContainer = styled.div`
   margin: 0 auto;
 `;
 
-const Message = styled.div<{ isSentByMe: boolean }>`
+const Message = styled.div<{ $isSentByMe: boolean }>`
     position: relative;
     width: max-content;
     max-width: 850px;
-    background-color: ${props => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
+    background-color: ${props => (props.$isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
     color: ${TEXT_COLORS.PRIMARY};
-    margin-left: ${props => (props.isSentByMe ? 'auto' : 'unset')};
+    margin-left: ${props => (props.$isSentByMe ? 'auto' : 'unset')};
     text-align: left;
     border-radius: 20px;
     padding: 8px;
@@ -60,24 +60,24 @@ const Message = styled.div<{ isSentByMe: boolean }>`
         position: absolute;
         z-index: -1;
         bottom: -2px;
-        ${props => (props.isSentByMe ? 'right: -7px;' : 'left: -7px;')}
+        ${props => (props.$isSentByMe ? 'right: -7px;' : 'left: -7px;')}
         height: 20px;
-        border-${props => (props.isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
-        border-bottom-${props => (props.isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
+        border-${props => (props.$isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.$isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
+        border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
         transform: translate(0, -2px);
     }
 
     &:after {
         content: "";
         position: absolute;
-        z-index: ${props => (props.isSentByMe ? '1' : '3')};
+        z-index: ${props => (props.$isSentByMe ? '1' : '3')};
         bottom: -2px;
-        ${props => (props.isSentByMe ? 'right: -56px;' : 'left: 4px;')}
+        ${props => (props.$isSentByMe ? 'right: -56px;' : 'left: 4px;')}
         width: 26px;
         height: 20px;
         background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
-        border-bottom-${props => (props.isSentByMe ? 'left' : 'right')}-radius: 10px;
-        transform: ${props => (props.isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
+        border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 10px;
+        transform: ${props => (props.$isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
     }
 `;
 
@@ -117,13 +117,13 @@ const TypingIndicator = styled.div`
   }
 `;
 
-const Dot = styled.div<{ delay: number }>`
+const Dot = styled.div<{ $delay: number }>`
   width: 8px;
   height: 8px;
   background-color: #cfcfcf;
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out;
-  animation-delay: ${props => props.delay}s;
+  animation-delay: ${props => props.$delay}s;
 
   @keyframes typing {
     0%,
@@ -168,7 +168,7 @@ const ChatWindow = ({
         {selectedChat ? (
           <MessagesContainer>
             {selectedChat.messages.map((msg: Msg, index: number) => (
-              <Message key={index} isSentByMe={msg.sender === 'Me'}>
+              <Message key={index} $isSentByMe={msg.sender === 'Me'}>
                 <MarkdownRenderer>{msg.text}</MarkdownRenderer>
               </Message>
             ))}
@@ -176,9 +176,9 @@ const ChatWindow = ({
               !loadingState.isStreaming &&
               loadingState.currentChatId === selectedChat.id && (
                 <TypingIndicator>
-                  <Dot delay={0} />
-                  <Dot delay={0.2} />
-                  <Dot delay={0.4} />
+                  <Dot $delay={0} />
+                  <Dot $delay={0.2} />
+                  <Dot $delay={0.4} />
                 </TypingIndicator>
               )}
           </MessagesContainer>
