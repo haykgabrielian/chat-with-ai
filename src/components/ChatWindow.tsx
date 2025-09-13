@@ -91,6 +91,7 @@ const TypingIndicator = styled.div<{ theme: ThemeType }>`
   margin-top: 8px;
   margin-left: 0;
   position: relative;
+  z-index: 0;
   &:before {
     content: '';
     position: absolute;
