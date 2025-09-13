@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import Button from '@/components/Button';
 import { GoogleIcon } from '@/components/icons';
 import { ThemeType } from '@/helpers/themes';
 
@@ -39,63 +40,10 @@ const Input = styled.input<{ theme: ThemeType }>`
   }
 `;
 
-const Button = styled.button<{ theme: ThemeType }>`
-  background: ${props => props.theme.button.primary};
-  border: none;
-  border-radius: 8px;
-  padding: 12px 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: ${props => props.theme.text.white};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: ${props => props.theme.button.primaryHover};
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
-const GoogleButton = styled.button<{ theme: ThemeType }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 12px 16px;
-  background: ${props => props.theme.text.white};
-  border: 1px solid ${props => props.theme.input.border};
-  border-radius: 8px;
-
-  font-size: 1rem;
-  font-weight: 600;
-  color: ${props => props.theme.text.secondary};
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover {
-    background: #f8f9fa;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
-`;
-
 const Divider = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
-  margin: 20px 0;
+  margin: 15px 0;
   color: ${props => props.theme.text.secondary};
   font-size: 0.9rem;
 
@@ -181,14 +129,21 @@ const SignInForm = ({ onToggleToSignUp }: Props) => {
         />
       </InputGroup>
 
-      <Button onClick={handleSubmit}>Sign In</Button>
+      <Button fullWidth size='large' variant='primary' onClick={handleSubmit}>
+        Sign In
+      </Button>
 
       <Divider>or</Divider>
 
-      <GoogleButton type='button' onClick={handleGoogleSignIn}>
-        <GoogleIcon />
+      <Button
+        fullWidth
+        icon={<GoogleIcon />}
+        size='large'
+        variant='secondary'
+        onClick={handleGoogleSignIn}
+      >
         Sign in with Google
-      </GoogleButton>
+      </Button>
 
       <ToggleText>
         Don't have an account?{' '}

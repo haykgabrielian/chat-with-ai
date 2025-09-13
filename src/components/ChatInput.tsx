@@ -33,7 +33,6 @@ const Input = styled.textarea<{ theme: ThemeType }>`
   outline: none;
   font-family: inherit;
   transition: border-color 0.2s ease;
-  opacity: ${props => (props.disabled ? 0.5 : 1)};
   cursor: ${props => (props.disabled ? 'not-allowed' : 'text')};
 
   &::placeholder {

@@ -77,8 +77,10 @@ img {
 }
 
 button {
-  all: unset;
   cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  border: none;
 }
 
 button,

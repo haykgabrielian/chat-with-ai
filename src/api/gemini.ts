@@ -80,7 +80,7 @@ export const fetchGeminiResponse = async (
 export const generateChatTitle = async (
   firstMessage: string
 ): Promise<string> => {
-  const prompt = `Summarize the following conversation in 5 words no markdown or fewer to use as a title: ${firstMessage}`;
+  const prompt = `Summarize the following conversation in 3 or 4 words no markdown to use as a title: ${firstMessage}`;
 
   const contents = [
     {

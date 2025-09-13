@@ -149,8 +149,8 @@ const ShareButton = styled.button<{ theme: ThemeType }>`
   position: fixed;
   top: 20px;
   right: 55px;
-  width: 22px;
-  height: 22px;
+  width: 38px;
+  height: 38px;
   background-color: ${props => props.theme.button.primary};
   color: ${props => props.theme.text.white};
   border: none;

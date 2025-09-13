@@ -12,3 +12,4 @@ export { default as SunIcon } from './SunIcon';
 export { default as MoonIcon } from './MoonIcon';
 export { default as ShareIcon } from './ShareIcon';
 export { default as GlobeIcon } from './GlobeIcon';
+export { default as WarningIcon } from './WarningIcon';

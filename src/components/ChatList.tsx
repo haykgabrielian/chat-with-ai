@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import { useNavigate } from '@tanstack/react-router';
 
 import { ChatIcon, LoginIcon, TrashIcon, UserIcon } from '@/components/icons';
+import Button from '@/components/Button';
 
 import { Chat } from '@/types/common';
+import ConfirmationPopup from '@/components/ConfirmationPopup';
 import Search from '@/components/Search';
 import { ThemeType } from '@/helpers/themes';
 
@@ -31,7 +33,6 @@ const Header = styled.div`
 const ChatListContainer = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-top: 20px;
 `;
 
 const List = styled.ul`
@@ -44,7 +45,7 @@ const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
+  padding: 6px 10px;
   margin-bottom: 5px;
   cursor: pointer;
   color: ${props => props.theme.text.primary};
@@ -65,6 +66,7 @@ const ChatName = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-size: 14px;
 `;
 
 const DeleteButton = styled.button<{ theme: ThemeType }>`
@@ -100,84 +102,9 @@ const ChatItemContainer = styled.div`
   }
 `;
 
-const NewChatButton = styled.button<{ theme: ThemeType }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 10px 0;
-  background-color: ${props => props.theme.button.primary};
-  color: ${props => props.theme.text.white};
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-top: 8px;
-
-  &:hover {
-    background-color: ${props => props.theme.button.primaryHover};
-  }
-`;
-
 const Footer = styled.div`
   padding: 20px 0;
   flex-shrink: 0;
-`;
-
-const LoginButton = styled.button<{ theme: ThemeType }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 10px 0;
-  background-color: ${props => props.theme.button.primary};
-  color: ${props => props.theme.text.white};
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-  gap: 8px;
-
-  &:hover {
-    background-color: ${props => props.theme.button.primaryHover};
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-  }
-`;
-
-const UserButton = styled.button<{ theme: ThemeType }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 10px 0;
-  background-color: ${props => props.theme.button.primary};
-  color: ${props => props.theme.text.white};
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-  font-size: 0.875rem;
-  font-weight: 500;
-  gap: 8px;
-
-  &:hover {
-    background-color: ${props => props.theme.button.primaryHover};
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-  }
 `;
 
 const NoChatsContainer = styled.div`
@@ -221,6 +148,7 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [chatToDelete, setChatToDelete] = useState<string | null>(null);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -250,7 +178,21 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
 
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    removeChat(chatId);
+    setChatToDelete(chatId);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!chatToDelete) return;
+    try {
+      await removeChat(chatToDelete);
+      setChatToDelete(null);
+    } catch (error) {
+      console.error('Failed to delete chat:', error);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setChatToDelete(null);
   };
 
   const handleLogin = () => {
@@ -259,66 +201,95 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
   };
 
   return (
-    <Container>
-      <Header>
-        <NewChatButton onClick={() => selectChat(null)}>New Chat</NewChatButton>
-        <Search
-          query={query}
-          onChange={handleSearchChange}
-          onClear={handleSearchClear}
-        />
-      </Header>
-      <ChatListContainer>
-        <List>
-          {filteredChats.length > 0 ? (
-            [...filteredChats]
-              .sort((a, b) =>
-                (b.timestamp ?? '').localeCompare(a.timestamp ?? '')
-              )
-              .map(chat => (
-                <ChatItemContainer key={chat.id}>
-                  <ChatItem
-                    onClick={() => selectChat(chat)}
-                    $isSelected={chat.id === selectedChatId}
-                  >
-                    <ChatName>{chat.name}</ChatName>
-                    <DeleteButton
-                      onClick={e => handleDeleteChat(e, chat.id)}
-                      title='Delete chat'
+    <>
+      <Container>
+        <Header>
+          <Button
+            fullWidth
+            size='medium'
+            variant='primary'
+            onClick={() => selectChat(null)}
+          >
+            New Chat
+          </Button>
+          <Search
+            query={query}
+            onChange={handleSearchChange}
+            onClear={handleSearchClear}
+          />
+        </Header>
+        <ChatListContainer>
+          <List>
+            {filteredChats.length > 0 ? (
+              [...filteredChats]
+                .sort((a, b) =>
+                  (b.timestamp ?? '').localeCompare(a.timestamp ?? '')
+                )
+                .map(chat => (
+                  <ChatItemContainer key={chat.id}>
+                    <ChatItem
+                      onClick={() => selectChat(chat)}
+                      $isSelected={chat.id === selectedChatId}
                     >
-                      <TrashIcon />
-                    </DeleteButton>
-                  </ChatItem>
-                </ChatItemContainer>
-              ))
+                      <ChatName>{chat.name}</ChatName>
+                      <DeleteButton
+                        onClick={e => handleDeleteChat(e, chat.id)}
+                        title='Delete chat'
+                      >
+                        <TrashIcon />
+                      </DeleteButton>
+                    </ChatItem>
+                  </ChatItemContainer>
+                ))
+            ) : (
+              <NoChatsContainer>
+                <NoChatsIcon>
+                  <ChatIcon size={24} />
+                </NoChatsIcon>
+                <NoChatsTitle>No chats Found</NoChatsTitle>
+                <NoChatsMessage>
+                  Start a conversation by clicking "New Chat" above or send a
+                  message.
+                </NoChatsMessage>
+              </NoChatsContainer>
+            )}
+          </List>
+        </ChatListContainer>
+        <Footer>
+          {isLoggedIn ? (
+            <Button
+              fullWidth
+              size='medium'
+              icon={<UserIcon size={16} />}
+              variant='primary'
+              onClick={handleLogin}
+            >
+              John Doe
+            </Button>
           ) : (
-            <NoChatsContainer>
-              <NoChatsIcon>
-                <ChatIcon size={24} />
-              </NoChatsIcon>
-              <NoChatsTitle>No chats Found</NoChatsTitle>
-              <NoChatsMessage>
-                Start a conversation by clicking "New Chat" above or send a
-                message.
-              </NoChatsMessage>
-            </NoChatsContainer>
+            <Button
+              fullWidth
+              size='medium'
+              icon={<LoginIcon size={16} />}
+              variant='primary'
+              onClick={handleLogin}
+            >
+              Login
+            </Button>
           )}
-        </List>
-      </ChatListContainer>
-      <Footer>
-        {isLoggedIn ? (
-          <UserButton onClick={handleLogin}>
-            <UserIcon size={16} />
-            John Doe
-          </UserButton>
-        ) : (
-          <LoginButton onClick={handleLogin}>
-            <LoginIcon size={16} />
-            Login
-          </LoginButton>
-        )}
-      </Footer>
-    </Container>
+        </Footer>
+      </Container>
+      {chatToDelete !== null && (
+        <ConfirmationPopup
+          onClose={handleCancelDelete}
+          onConfirm={handleConfirmDelete}
+          title='Delete Conversation'
+          subtitle='Are you sure you want to delete this conversation? This action cannot be undone.'
+          confirmButtonText='Delete'
+          iconLevel='critical'
+        />
+      )}
+    </>
   );
 };
 

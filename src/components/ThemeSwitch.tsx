@@ -6,8 +6,8 @@ import { ThemeToggleContext } from '@/context//ThemeContext';
 import { ThemeType } from '@/helpers/themes';
 
 const StyledButton = styled.button<{ theme: ThemeType }>`
-  width: 22px;
-  height: 22px;
+  width: 38px;
+  height: 38px;
   background-color: ${props => props.theme.button.primary};
   color: ${props => props.theme.text.white};
   border: none;

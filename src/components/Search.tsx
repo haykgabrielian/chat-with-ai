@@ -7,7 +7,7 @@ import { ThemeType } from '@/helpers/themes';
 const SearchContainer = styled.div`
   position: relative;
   width: 100%;
-  margin-top: 12px;
+  margin: 12px 0;
 `;
 
 const SearchInput = styled.input<{ theme: ThemeType }>`
