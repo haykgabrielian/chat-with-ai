@@ -53,6 +53,7 @@ const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
     border-radius: 20px;
     padding: 8px;
     margin-top: 8px;
+    z-index: 1;
     &:before {
         content: "";
         position: absolute;
