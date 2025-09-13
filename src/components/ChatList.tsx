@@ -6,8 +6,7 @@ import { ChatIcon, LoginIcon, TrashIcon, UserIcon } from '@/components/icons';
 
 import { Chat } from '@/types/common';
 import Search from '@/components/Search';
-
-import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { ThemeType } from '@/helpers/themes';
 
 type Props = {
   chats: Chat[];
@@ -16,13 +15,13 @@ type Props = {
   removeChat: (chatId: string) => Promise<void>;
 };
 
-const Container = styled.div`
+const Container = styled.div<{ theme: ThemeType }>`
   display: flex;
   flex-direction: column;
   width: 100%;
   height: 100vh;
   padding: 80px 10px 0 10px;
-  background-color: ${BACKGROUND_COLORS.SIDEBAR};
+  background-color: ${props => props.theme.background.sidebar};
 `;
 
 const Header = styled.div`
@@ -41,21 +40,23 @@ const List = styled.ul`
   margin: 0;
 `;
 
-const ChatItem = styled.li<{ $isSelected: boolean }>`
+const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 8px 12px;
   margin-bottom: 5px;
   cursor: pointer;
-  color: ${TEXT_COLORS.PRIMARY};
+  color: ${props => props.theme.text.primary};
   border-radius: 10px;
   text-align: left;
   transition: background-color 0.3s ease;
   background-color: ${props =>
-    props.$isSelected ? BACKGROUND_COLORS.CHAT_ITEM_SELECTED : 'transparent'};
+    props.$isSelected
+      ? props.theme.background.chatItemSelected
+      : 'transparent'};
   &:hover {
-    background-color: ${BACKGROUND_COLORS.CHAT_ITEM_HOVER};
+    background-color: ${props => props.theme.background.chatItemHover};
   }
 `;
 
@@ -66,10 +67,10 @@ const ChatName = styled.span`
   white-space: nowrap;
 `;
 
-const DeleteButton = styled.button`
+const DeleteButton = styled.button<{ theme: ThemeType }>`
   background: none;
   border: none;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -82,8 +83,8 @@ const DeleteButton = styled.button`
     color 0.2s ease;
 
   &:hover {
-    color: ${BUTTON_COLORS.DELETE_HOVER};
-    background-color: ${BUTTON_COLORS.DELETE_BG_HOVER};
+    color: ${props => props.theme.button.deleteHover};
+    background-color: ${props => props.theme.button.deleteBgHover};
   }
 
   svg {
@@ -99,14 +100,14 @@ const ChatItemContainer = styled.div`
   }
 `;
 
-const NewChatButton = styled.button`
+const NewChatButton = styled.button<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   padding: 10px 0;
-  background-color: ${BUTTON_COLORS.PRIMARY};
-  color: ${TEXT_COLORS.WHITE};
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -116,7 +117,7 @@ const NewChatButton = styled.button`
   margin-top: 8px;
 
   &:hover {
-    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+    background-color: ${props => props.theme.button.primaryHover};
   }
 `;
 
@@ -125,14 +126,14 @@ const Footer = styled.div`
   flex-shrink: 0;
 `;
 
-const LoginButton = styled.button`
+const LoginButton = styled.button<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   padding: 10px 0;
-  background-color: ${BUTTON_COLORS.PRIMARY};
-  color: ${TEXT_COLORS.WHITE};
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -142,7 +143,7 @@ const LoginButton = styled.button`
   gap: 8px;
 
   &:hover {
-    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+    background-color: ${props => props.theme.button.primaryHover};
   }
 
   svg {
@@ -152,14 +153,14 @@ const LoginButton = styled.button`
   }
 `;
 
-const UserButton = styled.button`
+const UserButton = styled.button<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   padding: 10px 0;
-  background-color: ${BUTTON_COLORS.PRIMARY};
-  color: ${TEXT_COLORS.WHITE};
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -169,7 +170,7 @@ const UserButton = styled.button`
   gap: 8px;
 
   &:hover {
-    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+    background-color: ${props => props.theme.button.primaryHover};
   }
 
   svg {
@@ -189,27 +190,27 @@ const NoChatsContainer = styled.div`
   min-height: 200px;
 `;
 
-const NoChatsIcon = styled.div`
+const NoChatsIcon = styled.div<{ theme: ThemeType }>`
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  background-color: ${BUTTON_COLORS.PRIMARY};
+  background-color: ${props => props.theme.button.primary};
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
-  color: ${TEXT_COLORS.WHITE};
+  color: ${props => props.theme.text.white};
 `;
 
-const NoChatsTitle = styled.h3`
-  color: ${TEXT_COLORS.PRIMARY};
+const NoChatsTitle = styled.h3<{ theme: ThemeType }>`
+  color: ${props => props.theme.text.primary};
   font-size: 1.125rem;
   font-weight: 600;
   margin: 0 0 8px 0;
 `;
 
-const NoChatsMessage = styled.p`
-  color: ${TEXT_COLORS.SECONDARY};
+const NoChatsMessage = styled.p<{ theme: ThemeType }>`
+  color: ${props => props.theme.text.secondary};
   font-size: 0.875rem;
   margin: 0;
   line-height: 1.5;

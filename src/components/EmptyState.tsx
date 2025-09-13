@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Logo from '@/components/Logo';
-
-import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { ThemeType } from '@/helpers/themes';
 
 const Container = styled.div`
   display: flex;
@@ -31,16 +30,16 @@ const MainIcon = styled.div`
   margin: 0 auto 12px;
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ theme: ThemeType }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${TEXT_COLORS.WHITE};
+  color: ${props => props.theme.text.white};
   margin-bottom: 12px;
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.p<{ theme: ThemeType }>`
   font-size: 1.1rem;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   margin-bottom: 24px;
   line-height: 1.5;
 `;
@@ -53,8 +52,8 @@ const FeaturesGrid = styled.div`
   width: 100%;
 `;
 
-const FeatureCard = styled.div`
-  background: ${BACKGROUND_COLORS.MESSAGE_AI};
+const FeatureCard = styled.div<{ theme: ThemeType }>`
+  background: ${props => props.theme.background.messageAI};
   border-radius: 12px;
   padding: 16px;
   text-align: left;
@@ -68,10 +67,10 @@ const FeatureCard = styled.div`
   }
 `;
 
-const FeatureTitle = styled.h3`
+const FeatureTitle = styled.h3<{ theme: ThemeType }>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${TEXT_COLORS.PRIMARY};
+  color: ${props => props.theme.text.primary};
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -80,13 +79,13 @@ const FeatureTitle = styled.h3`
   svg {
     width: 14px;
     height: 14px;
-    fill: ${BUTTON_COLORS.PRIMARY_HOVER};
+    fill: ${props => props.theme.button.primaryHover};
   }
 `;
 
-const FeatureDescription = styled.p`
+const FeatureDescription = styled.p<{ theme: ThemeType }>`
   font-size: 0.85rem;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   line-height: 1.4;
 `;
 

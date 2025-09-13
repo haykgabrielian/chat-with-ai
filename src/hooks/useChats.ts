@@ -26,7 +26,7 @@ export const useChats = () => {
     setSelectedChat(chat);
   };
 
-  const createNewChat = async (message: string) => {
+  const createNewChat = async (message: string, search: boolean) => {
     if (!message.trim() || loadingState.isLoading) return;
 
     const getFirstFourWords = (sentence: string) => {
@@ -56,6 +56,7 @@ export const useChats = () => {
       let fullResponse = '';
       const geminiReply = await fetchGeminiResponse(
         newChat.messages,
+        search,
         (chunk: string) => {
           if (!fullResponse && chunk) {
             setLoadingState({
@@ -129,7 +130,7 @@ export const useChats = () => {
     }
   };
 
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (message: string, search: boolean) => {
     if (!selectedChat || loadingState.isLoading) return;
 
     const now = new Date().toISOString();
@@ -155,6 +156,7 @@ export const useChats = () => {
       let fullResponse = '';
       const geminiReply = await fetchGeminiResponse(
         updatedChat.messages,
+        search,
         (chunk: string) => {
           if (!fullResponse && chunk) {
             setLoadingState({

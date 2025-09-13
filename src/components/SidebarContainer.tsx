@@ -5,8 +5,7 @@ import { HamburgerIcon } from '@/components/icons';
 
 import { Chat } from '@/types/common';
 import ChatList from '@/components/ChatList';
-
-import { BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { ThemeType } from '@/helpers/themes';
 
 type Props = {
   isOpen: boolean;
@@ -24,14 +23,14 @@ const Container = styled.div<{ $isOpen: boolean }>`
   position: relative;
 `;
 
-const HamburgerButton = styled.button<{ $isOpen: boolean }>`
+const HamburgerButton = styled.button<{ theme: ThemeType }>`
   position: fixed;
   top: 20px;
   left: 10px;
   width: 22px;
   height: 22px;
-  background-color: ${BUTTON_COLORS.PRIMARY};
-  color: ${TEXT_COLORS.WHITE};
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -43,7 +42,7 @@ const HamburgerButton = styled.button<{ $isOpen: boolean }>`
   padding: 8px;
 
   &:hover {
-    background-color: ${BUTTON_COLORS.PRIMARY_HOVER};
+    background-color: ${props => props.theme.button.primaryHover};
   }
 
   svg {
@@ -63,7 +62,7 @@ const SidebarContainer = ({
 }: Props) => {
   return (
     <Container $isOpen={isOpen}>
-      <HamburgerButton onClick={toggleSidebar} $isOpen={isOpen}>
+      <HamburgerButton onClick={toggleSidebar}>
         <HamburgerIcon isOpen={isOpen} />
       </HamburgerButton>
       <ChatList

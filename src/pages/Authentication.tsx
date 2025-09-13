@@ -6,8 +6,7 @@ import { useNavigate } from '@tanstack/react-router';
 import Logo from '@/components/Logo';
 import SignInForm from '@/components/Forms/SignInForm';
 import SignUpForm from '@/components/Forms/SignUpForm';
-
-import { BACKGROUND_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { ThemeType } from '@/helpers/themes';
 
 const Container = styled.div`
   display: flex;
@@ -18,27 +17,27 @@ const Container = styled.div`
   padding: 20px;
 `;
 
-const AuthCard = styled.div`
+const AuthCard = styled.div<{ theme: ThemeType }>`
   width: 100%;
   max-width: 450px;
   padding: 30px;
-  background: ${BACKGROUND_COLORS.SIDEBAR};
+  background: ${props => props.theme.background.sidebar};
   border-radius: 16px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border: 1px solid ${BACKGROUND_COLORS.MESSAGE_AI};
+  border: 1px solid ${props => props.theme.background.messageAI};
 `;
 
-const Title = styled.h1`
+const Title = styled.h1<{ theme: ThemeType }>`
   font-size: 2rem;
   font-weight: 700;
-  color: ${TEXT_COLORS.WHITE};
+  color: ${props => props.theme.text.white};
   text-align: center;
 `;
 
-const Subtitle = styled.p`
+const Subtitle = styled.p<{ theme: ThemeType }>`
   margin-top: 8px;
   font-size: 1rem;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   text-align: center;
 `;
 

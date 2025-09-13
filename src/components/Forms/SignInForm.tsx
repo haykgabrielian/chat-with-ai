@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
-import { BUTTON_COLORS, INPUT_COLORS, TEXT_COLORS } from '@/theme/colors';
 import { GoogleIcon } from '@/components/icons';
+import { ThemeType } from '@/helpers/themes';
 
 const Form = styled.div`
   display: flex;
@@ -18,40 +18,40 @@ const InputGroup = styled.div`
   width: 100%;
 `;
 
-const Label = styled.label`
+const Label = styled.label<{ theme: ThemeType }>`
   font-size: 0.9rem;
   font-weight: 500;
-  color: ${TEXT_COLORS.PRIMARY};
+  color: ${props => props.theme.text.primary};
 `;
 
-const Input = styled.input`
+const Input = styled.input<{ theme: ThemeType }>`
   width: 100%;
   padding: 12px 16px;
-  background: ${INPUT_COLORS.BACKGROUND};
-  border: 1px solid ${INPUT_COLORS.BORDER};
+  background: ${props => props.theme.input.background};
+  border: 1px solid ${props => props.theme.input.border};
   border-radius: 8px;
   font-size: 1rem;
-  color: ${TEXT_COLORS.PRIMARY};
+  color: ${props => props.theme.text.primary};
   transition: all 0.2s ease;
 
   &::placeholder {
-    color: ${INPUT_COLORS.PLACEHOLDER};
+    color: ${props => props.theme.input.placeholder};
   }
 `;
 
-const Button = styled.button`
-  background: ${BUTTON_COLORS.PRIMARY};
+const Button = styled.button<{ theme: ThemeType }>`
+  background: ${props => props.theme.button.primary};
   border: none;
   border-radius: 8px;
   padding: 12px 16px;
   font-size: 1rem;
   font-weight: 600;
-  color: ${TEXT_COLORS.WHITE};
+  color: ${props => props.theme.text.white};
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    background: ${BUTTON_COLORS.PRIMARY_HOVER};
+    background: ${props => props.theme.button.primaryHover};
     transform: translateY(-1px);
   }
 
@@ -60,19 +60,19 @@ const Button = styled.button`
   }
 `;
 
-const GoogleButton = styled.button`
+const GoogleButton = styled.button<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   padding: 12px 16px;
-  background: ${TEXT_COLORS.WHITE};
-  border: 1px solid ${INPUT_COLORS.BORDER};
+  background: ${props => props.theme.text.white};
+  border: 1px solid ${props => props.theme.input.border};
   border-radius: 8px;
 
   font-size: 1rem;
   font-weight: 600;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   cursor: pointer;
   transition: all 0.2s ease;
 
@@ -92,11 +92,11 @@ const GoogleButton = styled.button`
   }
 `;
 
-const Divider = styled.div`
+const Divider = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   margin: 20px 0;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   font-size: 0.9rem;
 
   &::before,
@@ -104,7 +104,7 @@ const Divider = styled.div`
     content: '';
     flex: 1;
     height: 1px;
-    background: ${INPUT_COLORS.BORDER};
+    background: ${props => props.theme.input.border};
   }
 
   &::before {
@@ -116,25 +116,25 @@ const Divider = styled.div`
   }
 `;
 
-const ToggleText = styled.p`
+const ToggleText = styled.p<{ theme: ThemeType }>`
   margin: 0;
   text-align: center;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   font-size: 0.9rem;
 `;
 
-const ToggleLink = styled.button`
+const ToggleLink = styled.button<{ theme: ThemeType }>`
   padding: 0;
   margin-left: 4px;
   background: none;
   border: none;
-  color: ${BUTTON_COLORS.PRIMARY_HOVER};
+  color: ${props => props.theme.button.primaryHover};
   cursor: pointer;
   text-decoration: underline;
   font-size: 0.9rem;
 
   &:hover {
-    color: ${TEXT_COLORS.PRIMARY};
+    color: ${props => props.theme.text.primary};
   }
 `;
 

@@ -3,6 +3,7 @@ const API_URL = import.meta.env.VITE_GEMINI_API_URL;
 
 export const fetchGeminiResponse = async (
   messages: { sender: string; text: string }[],
+  search: boolean,
   onChunk?: (chunk: string) => void
 ) => {
   const last10Messages = messages.slice(-10);
@@ -12,12 +13,14 @@ export const fetchGeminiResponse = async (
     parts: [{ text: msg.text }],
   }));
 
+  const tools = [{ google_search: {} }];
+
   const res = await fetch(
     `${API_URL}streamGenerateContent?key=${API_KEY}&alt=sse`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents }),
+      body: JSON.stringify({ contents, ...(search ? { tools } : {}) }),
     }
   );
 

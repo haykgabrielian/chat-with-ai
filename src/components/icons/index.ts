@@ -8,3 +8,7 @@ export { default as CloseIcon } from './CloseIcon';
 export { default as ChatIcon } from './ChatIcon';
 export { default as LogoIcon } from './LogoIcon';
 export { default as GoogleIcon } from './GoogleIcon';
+export { default as SunIcon } from './SunIcon';
+export { default as MoonIcon } from './MoonIcon';
+export { default as ShareIcon } from './ShareIcon';
+export { default as GlobeIcon } from './GlobeIcon';

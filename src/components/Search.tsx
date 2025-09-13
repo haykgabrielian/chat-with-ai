@@ -2,8 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { CloseIcon, SearchIcon } from '@/components/icons';
-
-import { BACKGROUND_COLORS, BUTTON_COLORS, TEXT_COLORS } from '@/theme/colors';
+import { ThemeType } from '@/helpers/themes';
 
 const SearchContainer = styled.div`
   position: relative;
@@ -11,38 +10,38 @@ const SearchContainer = styled.div`
   margin-top: 12px;
 `;
 
-const SearchInput = styled.input`
+const SearchInput = styled.input<{ theme: ThemeType }>`
   width: 100%;
   padding: 8px 12px 8px 36px;
-  border: 1px solid ${BUTTON_COLORS.PRIMARY};
+  border: 1px solid ${props => props.theme.button.primary};
   border-radius: 8px;
-  background-color: ${BACKGROUND_COLORS.SIDEBAR};
-  color: ${TEXT_COLORS.PRIMARY};
+  background-color: ${props => props.theme.background.sidebar};
+  color: ${props => props.theme.text.primary};
   font-size: 0.875rem;
   outline: none;
   transition: border-color 0.2s ease;
 
   &::placeholder {
-    color: ${TEXT_COLORS.SECONDARY};
+    color: ${props => props.theme.text.secondary};
   }
 `;
 
-const SearchIconContainer = styled.div`
+const SearchIconContainer = styled.div<{ theme: ThemeType }>`
   position: absolute;
   left: 12px;
   top: 9px;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   pointer-events: none;
 `;
 
-const ClearButton = styled.button<{ $show: boolean }>`
+const ClearButton = styled.button<{ $show: boolean; theme: ThemeType }>`
   position: absolute;
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: ${TEXT_COLORS.SECONDARY};
+  color: ${props => props.theme.text.secondary};
   cursor: pointer;
   padding: 4px;
   border-radius: 4px;
@@ -52,7 +51,7 @@ const ClearButton = styled.button<{ $show: boolean }>`
   transition: color 0.2s ease;
 
   &:hover {
-    color: ${TEXT_COLORS.PRIMARY};
+    color: ${props => props.theme.text.primary};
   }
 
   svg {

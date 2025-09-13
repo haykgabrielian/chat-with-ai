@@ -12,7 +12,7 @@ const Container = styled.div`
 `;
 
 const Home = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const {
     chats,
     selectedChat,

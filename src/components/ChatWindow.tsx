@@ -3,19 +3,17 @@ import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 import { Chat, LoadingState, Msg } from '@/types/common';
 import ChatInput from '@/components/ChatInput';
+import { ThemeType } from '@/helpers/themes';
 import styled from 'styled-components';
 
-import {
-  BACKGROUND_COLORS,
-  MESSAGE_BUBBLE_COLORS,
-  TEXT_COLORS,
-} from '@/theme/colors';
 import EmptyState from '@/components/EmptyState';
+import { ShareIcon } from '@/components/icons';
+import ThemeToggleButton from '@/components/ThemeSwitch';
 
 type Props = {
   selectedChat: Chat | null;
-  sendMessage: (message: string) => void;
-  createNewChat: (message: string) => void;
+  sendMessage: (message: string, search: boolean) => void;
+  createNewChat: (message: string, search: boolean) => void;
   loadingState: LoadingState;
 };
 
@@ -30,7 +28,7 @@ const Container = styled.div`
 const Content = styled.div`
   flex-grow: 1;
   overflow: scroll;
-  padding-bottom: 100px;
+  padding-bottom: 130px;
 `;
 
 const MessagesContainer = styled.div`
@@ -44,12 +42,12 @@ const MessagesContainer = styled.div`
   margin: 0 auto;
 `;
 
-const Message = styled.div<{ $isSentByMe: boolean }>`
+const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
     position: relative;
     width: max-content;
     max-width: 850px;
-    background-color: ${props => (props.$isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
-    color: ${TEXT_COLORS.PRIMARY};
+    background-color: ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
+    color: ${props => props.theme.text.primary};
     margin-left: ${props => (props.$isSentByMe ? 'auto' : 'unset')};
     text-align: left;
     border-radius: 20px;
@@ -62,7 +60,7 @@ const Message = styled.div<{ $isSentByMe: boolean }>`
         bottom: -2px;
         ${props => (props.$isSentByMe ? 'right: -7px;' : 'left: -7px;')}
         height: 20px;
-        border-${props => (props.$isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.$isSentByMe ? BACKGROUND_COLORS.MESSAGE_USER : BACKGROUND_COLORS.MESSAGE_AI)};
+        border-${props => (props.$isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
         border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
         transform: translate(0, -2px);
     }
@@ -75,18 +73,18 @@ const Message = styled.div<{ $isSentByMe: boolean }>`
         ${props => (props.$isSentByMe ? 'right: -56px;' : 'left: 4px;')}
         width: 26px;
         height: 20px;
-        background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
+        background: ${props => props.theme.messageBubble.background};
         border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 10px;
         transform: ${props => (props.$isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
     }
 `;
 
-const TypingIndicator = styled.div`
+const TypingIndicator = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
   gap: 4px;
   padding: 12px 16px;
-  background-color: ${BACKGROUND_COLORS.TYPING_INDICATOR};
+  background-color: ${props => props.theme.background.typingIndicator};
   border-radius: 20px;
   width: fit-content;
   margin-top: 8px;
@@ -99,7 +97,7 @@ const TypingIndicator = styled.div`
     bottom: -2px;
     left: -7px;
     height: 20px;
-    border-left: 20px solid ${BACKGROUND_COLORS.TYPING_INDICATOR};
+    border-left: 20px solid ${props => props.theme.background.typingIndicator};
     border-bottom-right-radius: 16px 14px;
     transform: translate(0, -2px);
   }
@@ -111,16 +109,16 @@ const TypingIndicator = styled.div`
     left: 4px;
     width: 26px;
     height: 20px;
-    background: ${MESSAGE_BUBBLE_COLORS.BACKGROUND};
+    background: ${props => props.theme.messageBubble.background};
     border-bottom-right-radius: 10px;
     transform: translate(-30px, -2px);
   }
 `;
 
-const Dot = styled.div<{ $delay: number }>`
+const Dot = styled.div<{ $delay: number; theme: ThemeType }>`
   width: 8px;
   height: 8px;
-  background-color: #cfcfcf;
+  background-color: ${props => props.theme.text.secondary};
   border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out;
   animation-delay: ${props => props.$delay}s;
@@ -139,6 +137,41 @@ const Dot = styled.div<{ $delay: number }>`
   }
 `;
 
+const StyledThemeToggleButton = styled(ThemeToggleButton)`
+  position: fixed;
+  top: 20px;
+  right: 10px;
+`;
+
+const ShareButton = styled.button<{ theme: ThemeType }>`
+  position: fixed;
+  top: 20px;
+  right: 55px;
+  width: 22px;
+  height: 22px;
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  z-index: 10;
+  padding: 8px;
+
+  &:hover {
+    background-color: ${props => props.theme.button.primaryHover};
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+`;
+
 const ChatWindow = ({
   selectedChat,
   sendMessage,
@@ -147,11 +180,11 @@ const ChatWindow = ({
 }: Props) => {
   const messagesContentRef = useRef<HTMLDivElement | null>(null);
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string, search: boolean) => {
     if (!selectedChat) {
-      createNewChat(message);
+      createNewChat(message, search);
     } else {
-      sendMessage(message);
+      sendMessage(message, search);
     }
   };
 
@@ -164,6 +197,12 @@ const ChatWindow = ({
 
   return (
     <Container>
+      <StyledThemeToggleButton />
+      {selectedChat && (
+        <ShareButton>
+          <ShareIcon />
+        </ShareButton>
+      )}
       <Content ref={messagesContentRef}>
         {selectedChat ? (
           <MessagesContainer>
