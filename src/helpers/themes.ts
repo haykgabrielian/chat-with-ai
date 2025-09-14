@@ -3,6 +3,7 @@ export const lightTheme = {
   background: {
     primary: '#ffffff',
     sidebar: '#f5f5f5',
+    modal: '#f5f5f5',
     chatItemHover: '#eaeaea',
     chatItemSelected: '#e0e0e0',
     messageAI: '#f0f0f0',
@@ -44,6 +45,7 @@ export const darkTheme = {
   background: {
     primary: '#424242',
     sidebar: '#40414f',
+    modal: '#40414f',
     chatItemHover: '#565969',
     chatItemSelected: '#565969',
     messageAI: '#4e4e4e',

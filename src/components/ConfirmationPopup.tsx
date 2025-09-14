@@ -34,7 +34,7 @@ const PopupContainer = styled.div<{ theme: ThemeType }>`
   max-width: 460px;
   width: 100%;
   padding: 24px;
-  background-color: ${props => props.theme.background.primary};
+  background-color: ${props => props.theme.background.modal};
   border-radius: 12px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 `;
