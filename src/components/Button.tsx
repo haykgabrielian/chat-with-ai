@@ -27,7 +27,6 @@ const StyledButton = styled.button<{
   border-radius: 8px;
   font-weight: 500;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-  transition: all 0.2s ease;
 
   ${props => {
     switch (props.$size) {

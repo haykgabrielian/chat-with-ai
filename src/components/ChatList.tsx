@@ -59,7 +59,6 @@ const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   color: ${props => props.theme.text.primary};
   border-radius: 10px;
   text-align: left;
-  transition: background-color 0.2s ease;
   background-color: ${props =>
     props.$isSelected
       ? props.theme.background.chatItemSelected
@@ -85,6 +84,7 @@ const ButtonGroup = styled.div`
   align-items: center;
   background: ${props => props.theme.background.chatItemHover};
   opacity: 0;
+  border-radius: 8px;
 `;
 
 const DeleteButton = styled.button<{ theme: ThemeType }>`
@@ -99,8 +99,6 @@ const DeleteButton = styled.button<{ theme: ThemeType }>`
   cursor: pointer;
   padding: 4px;
   border-radius: 8px;
-  opacity: 1;
-  transition: background-color 0.2s ease;
 
   &:hover {
     color: ${props => props.theme.button.deleteHover};
@@ -126,8 +124,6 @@ const PinButton = styled.button<{ theme: ThemeType; $isPinned: boolean }>`
   cursor: pointer;
   padding: 4px;
   border-radius: 8px;
-  opacity: 1;
-  transition: background-color 0.2s ease;
 
   &:hover {
     color: ${props => props.theme.button.primaryHover};

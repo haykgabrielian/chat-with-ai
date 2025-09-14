@@ -63,7 +63,6 @@ const SearchButton = styled.button<{ theme: ThemeType; $isSearch: boolean }>`
   font-size: 14px;
   font-weight: 500;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
-  transition: all 0.2s ease;
   white-space: nowrap;
 
   svg {
