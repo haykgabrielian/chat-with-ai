@@ -195,7 +195,7 @@ const ChatWindow = ({
       const container = messagesContentRef.current;
       container.scrollTop = container.scrollHeight;
     }
-  }, [selectedChat?.messages.length, loadingState.isLoading]);
+  }, [selectedChat?.messages.length, selectedChat?.id, loadingState.isLoading]);
 
   return (
     <Container>

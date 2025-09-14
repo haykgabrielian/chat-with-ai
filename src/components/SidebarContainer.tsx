@@ -13,6 +13,7 @@ type Props = {
   selectedChatId: string | null;
   selectChat: (chat: Chat | null) => void;
   removeChat: (chatId: string) => Promise<void>;
+  togglePin: (chatId: string) => Promise<void>;
   toggleSidebar: () => void;
 };
 
@@ -58,6 +59,7 @@ const SidebarContainer = ({
   selectedChatId,
   selectChat,
   removeChat,
+  togglePin,
   toggleSidebar,
 }: Props) => {
   return (
@@ -70,6 +72,7 @@ const SidebarContainer = ({
         selectChat={selectChat}
         selectedChatId={selectedChatId}
         removeChat={removeChat}
+        togglePin={togglePin}
       />
     </Container>
   );

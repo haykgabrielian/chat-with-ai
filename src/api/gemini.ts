@@ -2,13 +2,13 @@ const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL = import.meta.env.VITE_GEMINI_API_URL;
 
 export const fetchGeminiResponse = async (
-  messages: { sender: string; text: string }[],
+  messages: { sender: string; text: string; id: string }[],
   search: boolean,
   onChunk?: (chunk: string) => void
 ) => {
-  const last10Messages = messages.slice(-10);
+  const last20Messages = messages.slice(-20);
 
-  const contents = last10Messages.map(msg => ({
+  const contents = last20Messages.map(msg => ({
     role: msg.sender === 'Me' ? 'user' : 'model',
     parts: [{ text: msg.text }],
   }));

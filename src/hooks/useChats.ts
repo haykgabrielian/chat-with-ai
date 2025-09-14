@@ -1,8 +1,15 @@
 import { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 import { fetchGeminiResponse, generateChatTitle } from '@/api/gemini';
 
-import { deleteChat, getAllChats, saveChat, updateChatTitle } from '@/db/db';
+import {
+  deleteChat,
+  getAllChats,
+  saveChat,
+  toggleChatPin,
+  updateChatTitle,
+} from '@/db/db';
 
 import { Chat, LoadingState } from '@/types/common';
 
@@ -38,8 +45,9 @@ export const useChats = () => {
     const newChat: Chat = {
       id: Date.now().toString(),
       name: getFirstFourWords(message),
-      messages: [{ sender: 'Me', text: message }],
+      messages: [{ sender: 'Me', text: message, id: uuidv4() }],
       timestamp: now,
+      pinned: false,
     };
 
     await saveChat(newChat);
@@ -67,6 +75,7 @@ export const useChats = () => {
             newChat.messages.push({
               sender: 'Gemini',
               text: '',
+              id: uuidv4(),
             });
           }
           fullResponse += chunk;
@@ -87,6 +96,7 @@ export const useChats = () => {
       newChat.messages[newChat.messages.length - 1] = {
         sender: 'Gemini',
         text: fullResponse || geminiReply,
+        id: newChat.messages[newChat.messages.length - 1].id,
       };
       newChat.timestamp = new Date().toISOString();
 
@@ -118,6 +128,7 @@ export const useChats = () => {
       newChat.messages.push({
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
+        id: uuidv4(),
       });
       newChat.timestamp = new Date().toISOString();
       await saveChat(newChat);
@@ -137,7 +148,10 @@ export const useChats = () => {
 
     const updatedChat: Chat = {
       ...selectedChat,
-      messages: [...selectedChat.messages, { sender: 'Me', text: message }],
+      messages: [
+        ...selectedChat.messages,
+        { sender: 'Me', text: message, id: uuidv4() },
+      ],
       timestamp: now,
     };
 
@@ -167,6 +181,7 @@ export const useChats = () => {
             updatedChat.messages.push({
               sender: 'Gemini',
               text: '',
+              id: uuidv4(),
             });
           }
           fullResponse += chunk;
@@ -185,6 +200,7 @@ export const useChats = () => {
       updatedChat.messages[updatedChat.messages.length - 1] = {
         sender: 'Gemini',
         text: fullResponse || geminiReply,
+        id: updatedChat.messages[updatedChat.messages.length - 1].id, // Keep the same UUID
       };
       updatedChat.timestamp = new Date().toISOString();
 
@@ -200,6 +216,7 @@ export const useChats = () => {
       updatedChat.messages.push({
         sender: 'Gemini',
         text: 'Sorry, I encountered an error. Please try again.',
+        id: uuidv4(),
       });
       updatedChat.timestamp = new Date().toISOString();
       await saveChat(updatedChat);
@@ -228,6 +245,22 @@ export const useChats = () => {
       });
   };
 
+  const togglePin = async (chatId: string) => {
+    try {
+      const newPinnedState = await toggleChatPin(chatId);
+      setChats(prevChats =>
+        prevChats.map(chat =>
+          chat.id === chatId ? { ...chat, pinned: newPinnedState } : chat
+        )
+      );
+      if (selectedChat && selectedChat.id === chatId) {
+        setSelectedChat({ ...selectedChat, pinned: newPinnedState });
+      }
+    } catch (error) {
+      console.error('Error toggling pin:', error);
+    }
+  };
+
   return {
     chats,
     selectedChat,
@@ -236,5 +269,6 @@ export const useChats = () => {
     createNewChat,
     sendMessage,
     removeChat,
+    togglePin,
   };
 };

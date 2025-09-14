@@ -16,7 +16,8 @@ const initDB = async () => {
 export const saveChat = async (chat: {
   id: string;
   name: string;
-  messages: { sender: string; text: string }[];
+  messages: { sender: string; text: string; id: string }[];
+  pinned: boolean;
 }) => {
   const db = await initDB();
   await db.put(STORE_NAME, chat);
@@ -39,4 +40,15 @@ export const updateChatTitle = async (chatId: string, newTitle: string) => {
     chat.name = newTitle;
     await db.put(STORE_NAME, chat);
   }
+};
+
+export const toggleChatPin = async (chatId: string) => {
+  const db = await initDB();
+  const chat = await db.get(STORE_NAME, chatId);
+  if (chat) {
+    chat.pinned = !chat.pinned;
+    await db.put(STORE_NAME, chat);
+    return chat.pinned;
+  }
+  return false;
 };

@@ -1,6 +1,7 @@
 export type Msg = {
   sender: string;
   text: string;
+  id: string;
 };
 
 export type Chat = {
@@ -8,6 +9,7 @@ export type Chat = {
   name: string;
   messages: Msg[];
   timestamp?: string;
+  pinned: boolean;
 };
 
 export type LoadingState = {

@@ -21,6 +21,7 @@ const Home = () => {
     createNewChat,
     sendMessage,
     removeChat,
+    togglePin,
   } = useChats();
 
   const toggleSidebar = () => {
@@ -35,6 +36,7 @@ const Home = () => {
         selectedChatId={selectedChat ? selectedChat.id : null}
         selectChat={selectChat}
         removeChat={removeChat}
+        togglePin={togglePin}
         toggleSidebar={toggleSidebar}
       />
       <ChatWindow

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@tanstack/react-router": "^1.101.0",
+    "@types/uuid": "^10.0.0",
     "highlight.js": "^11.11.1",
     "idb": "^8.0.2",
     "react": "^19.0.0",
@@ -23,7 +24,8 @@
     "rehype-highlight": "^7.0.2",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

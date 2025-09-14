@@ -2,7 +2,13 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from '@tanstack/react-router';
 
-import { ChatIcon, LoginIcon, TrashIcon, UserIcon } from '@/components/icons';
+import {
+  ChatIcon,
+  LoginIcon,
+  PinIcon,
+  TrashIcon,
+  UserIcon,
+} from '@/components/icons';
 import Button from '@/components/Button';
 
 import { Chat } from '@/types/common';
@@ -15,6 +21,7 @@ type Props = {
   selectedChatId: string | null;
   selectChat: (chat: Chat | null) => void;
   removeChat: (chatId: string) => Promise<void>;
+  togglePin: (chatId: string) => Promise<void>;
 };
 
 const Container = styled.div<{ theme: ThemeType }>`
@@ -42,6 +49,7 @@ const List = styled.ul`
 `;
 
 const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -51,7 +59,7 @@ const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   color: ${props => props.theme.text.primary};
   border-radius: 10px;
   text-align: left;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
   background-color: ${props =>
     props.$isSelected
       ? props.theme.background.chatItemSelected
@@ -69,20 +77,30 @@ const ChatName = styled.span`
   font-size: 14px;
 `;
 
+const ButtonGroup = styled.div`
+  position: absolute;
+  right: 2px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  background: ${props => props.theme.background.chatItemHover};
+  opacity: 0;
+`;
+
 const DeleteButton = styled.button<{ theme: ThemeType }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
   background: none;
   border: none;
   color: ${props => props.theme.text.secondary};
   cursor: pointer;
   padding: 4px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition:
-    opacity 0.2s ease,
-    color 0.2s ease;
+  border-radius: 8px;
+  opacity: 1;
+  transition: background-color 0.2s ease;
 
   &:hover {
     color: ${props => props.theme.button.deleteHover};
@@ -96,9 +114,54 @@ const DeleteButton = styled.button<{ theme: ThemeType }>`
   }
 `;
 
-const ChatItemContainer = styled.div`
-  &:hover ${DeleteButton} {
+const PinButton = styled.button<{ theme: ThemeType; $isPinned: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  color: ${props => props.theme.text.secondary};
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 8px;
+  opacity: 1;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    color: ${props => props.theme.button.primaryHover};
+    background-color: ${props => props.theme.button.primaryBgHover};
+  }
+
+  svg {
+    fill: currentColor;
+  }
+`;
+
+const ChatItemContainerWithButtons = styled.div`
+  &:hover ${ButtonGroup} {
     opacity: 1;
+  }
+`;
+
+const SectionHeader = styled.div<{ theme: ThemeType }>`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 10px 4px 10px;
+  margin-top: 16px;
+  font-size: 12px;
+  text-align: left;
+  color: ${props => props.theme.text.secondary};
+
+  svg {
+    fill: currentColor;
+  }
+
+  &:first-child {
+    margin-top: 0;
   }
 `;
 
@@ -143,7 +206,13 @@ const NoChatsMessage = styled.p<{ theme: ThemeType }>`
   line-height: 1.5;
 `;
 
-const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
+const ChatList = ({
+  chats,
+  selectedChatId,
+  selectChat,
+  removeChat,
+  togglePin,
+}: Props) => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [query, setQuery] = useState('');
@@ -157,12 +226,20 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
     return () => clearTimeout(handler);
   }, [query]);
 
-  const filteredChats = useMemo(() => {
-    return [...chats]
-      .filter(chat =>
-        chat.name.toLowerCase().includes(debouncedQuery.toLowerCase())
-      )
+  const { pinnedChats, unpinnedChats } = useMemo(() => {
+    const filtered = [...chats].filter(chat =>
+      chat.name.toLowerCase().includes(debouncedQuery.toLowerCase())
+    );
+
+    const pinned = filtered
+      .filter(chat => chat.pinned)
       .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''));
+
+    const unpinned = filtered
+      .filter(chat => !chat.pinned)
+      .sort((a, b) => (b.timestamp ?? '').localeCompare(a.timestamp ?? ''));
+
+    return { pinnedChats: pinned, unpinnedChats: unpinned };
   }, [chats, debouncedQuery]);
 
   const handleSearchChange = useCallback(
@@ -179,6 +256,15 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     setChatToDelete(chatId);
+  };
+
+  const handleTogglePin = async (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    try {
+      await togglePin(chatId);
+    } catch (error) {
+      console.error('Failed to toggle pin:', error);
+    }
   };
 
   const handleConfirmDelete = async () => {
@@ -200,6 +286,32 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
     navigate({ to: '/authentication' });
   };
 
+  const renderChatItem = (chat: Chat) => (
+    <ChatItemContainerWithButtons key={chat.id}>
+      <ChatItem
+        onClick={() => selectChat(chat)}
+        $isSelected={chat.id === selectedChatId}
+      >
+        <ChatName>{chat.name}</ChatName>
+        <ButtonGroup>
+          <PinButton
+            onClick={e => handleTogglePin(e, chat.id)}
+            title={chat.pinned ? 'Unpin chat' : 'Pin chat'}
+            $isPinned={chat.pinned}
+          >
+            <PinIcon size={16} />
+          </PinButton>
+          <DeleteButton
+            onClick={e => handleDeleteChat(e, chat.id)}
+            title='Delete chat'
+          >
+            <TrashIcon size={16} />
+          </DeleteButton>
+        </ButtonGroup>
+      </ChatItem>
+    </ChatItemContainerWithButtons>
+  );
+
   return (
     <>
       <Container>
@@ -220,27 +332,23 @@ const ChatList = ({ chats, selectedChatId, selectChat, removeChat }: Props) => {
         </Header>
         <ChatListContainer>
           <List>
-            {filteredChats.length > 0 ? (
-              [...filteredChats]
-                .sort((a, b) =>
-                  (b.timestamp ?? '').localeCompare(a.timestamp ?? '')
-                )
-                .map(chat => (
-                  <ChatItemContainer key={chat.id}>
-                    <ChatItem
-                      onClick={() => selectChat(chat)}
-                      $isSelected={chat.id === selectedChatId}
-                    >
-                      <ChatName>{chat.name}</ChatName>
-                      <DeleteButton
-                        onClick={e => handleDeleteChat(e, chat.id)}
-                        title='Delete chat'
-                      >
-                        <TrashIcon />
-                      </DeleteButton>
-                    </ChatItem>
-                  </ChatItemContainer>
-                ))
+            {pinnedChats.length > 0 || unpinnedChats.length > 0 ? (
+              <>
+                {pinnedChats.length > 0 && (
+                  <>
+                    <SectionHeader>
+                      <PinIcon size={16} /> Pinned
+                    </SectionHeader>
+                    {pinnedChats.map(renderChatItem)}
+                  </>
+                )}
+                {unpinnedChats.length > 0 && (
+                  <>
+                    <SectionHeader>All</SectionHeader>
+                    {unpinnedChats.map(renderChatItem)}
+                  </>
+                )}
+              </>
             ) : (
               <NoChatsContainer>
                 <NoChatsIcon>

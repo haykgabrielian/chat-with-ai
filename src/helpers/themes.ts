@@ -17,6 +17,7 @@ export const lightTheme = {
   button: {
     primary: '#e0e0e0',
     primaryHover: '#0d8f6f',
+    primaryBgHover: 'rgba(13,143,111, 0.1)',
     activeHover: '#62968a',
     deleteHover: '#ff6b6b',
     deleteBgHover: 'rgba(255, 107, 107, 0.1)',
@@ -57,6 +58,7 @@ export const darkTheme = {
   button: {
     primary: '#565969',
     primaryHover: '#0d8f6f',
+    primaryBgHover: 'rgba(13,143,111, 0.1)',
     activeHover: '#62968a',
     deleteHover: '#ff6b6b',
     deleteBgHover: 'rgba(255, 107, 107, 0.1)',
