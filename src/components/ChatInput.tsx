@@ -50,6 +50,33 @@ const ButtonContainer = styled.div`
   padding: 0 14px;
 `;
 
+const Loader = styled.span`
+  position: relative;
+  display: inline-block;
+  width : 20px;
+  height: 20px;
+  &::after , &::before {
+    content: '';
+    position: absolute;
+    left:0;
+    top: 0;
+    width : 20px;
+    height: 20px;
+    border-radius: 50%;
+    border:2px solid #FFF;
+    opacity: 0;
+    animation: animateLoader 2s linear infinite;
+  }
+  &::after {
+    animation-delay: 1s;
+  }
+
+  @keyframes animateLoader {
+    0% { transform: scale(0); opacity: 1;}
+    100% { transform: scale(1); opacity: 0;}
+  }
+`;
+
 const SearchButton = styled.button<{ theme: ThemeType; $isSearch: boolean }>`
   display: flex;
   align-items: center;
@@ -92,8 +119,8 @@ const SendButton = styled.button<{ theme: ThemeType }>`
   transition: background-color 0.2s ease;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 14px;
+    height: 14px;
     fill: ${props => props.theme.text.white};
   }
 `;
@@ -162,7 +189,7 @@ const ChatInput = ({
           disabled={!message.trim() || isLoading}
           title='Send message'
         >
-          <SendIcon />
+          {isLoading ? <Loader /> : <SendIcon />}
         </SendButton>
       </ButtonContainer>
     </InputContainer>
