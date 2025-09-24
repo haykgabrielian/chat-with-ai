@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 import EmptyState from '@/components/EmptyState';
 import { ShareIcon } from '@/components/icons';
-import ThemeToggleButton from '@/components/ThemeSwitch';
+import ThemeToggleButton from '@/components/Theme/ThemeSwitch';
 
 type Props = {
   selectedChat: Chat | null;

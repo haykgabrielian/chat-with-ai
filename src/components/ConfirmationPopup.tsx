@@ -5,17 +5,6 @@ import { CloseIcon, WarningIcon } from '@/components/icons';
 import Button from '@/components/Button';
 import { ThemeType } from '@/helpers/themes';
 
-type ConfirmationPopupProps = {
-  onClose: () => void;
-  onConfirm: () => void;
-  title: string;
-  subtitle?: string;
-  confirmButtonText?: string;
-  cancelButtonText?: string;
-  confirmButtonVariant?: 'primary' | 'danger';
-  iconLevel?: 'info' | 'warning' | 'critical';
-};
-
 const Overlay = styled.div`
   position: fixed;
   top: 0;
@@ -103,7 +92,18 @@ const ButtonContainer = styled.div`
   gap: 12px;
 `;
 
-const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({
+type ConfirmationPopupProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  subtitle?: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  confirmButtonVariant?: 'primary' | 'danger';
+  iconLevel?: 'info' | 'warning' | 'critical';
+};
+
+const ConfirmationPopup = ({
   onClose,
   onConfirm,
   title,
@@ -111,7 +111,7 @@ const ConfirmationPopup: React.FC<ConfirmationPopupProps> = ({
   confirmButtonText = 'Confirm',
   cancelButtonText = 'Cancel',
   iconLevel = 'warning',
-}) => {
+}: ConfirmationPopupProps) => {
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       onClose();

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 
+import { GithubIcon, GoogleIcon } from '@/components/icons';
 import Button from '@/components/Button';
-import { GoogleIcon } from '@/components/icons';
+import Loader from '@/components/Loader';
 import { ThemeType } from '@/helpers/themes';
+import isValidEmail from '@/helpers/isValidEmail';
 
 const Form = styled.div`
   display: flex;
@@ -25,11 +27,12 @@ const Label = styled.label<{ theme: ThemeType }>`
   color: ${props => props.theme.text.primary};
 `;
 
-const Input = styled.input<{ theme: ThemeType }>`
+const Input = styled.input<{ theme: ThemeType; $hasError?: boolean }>`
   width: 100%;
   padding: 12px 16px;
   background: ${props => props.theme.input.background};
-  border: 1px solid ${props => props.theme.input.border};
+  border: 1px solid
+    ${props => (props.$hasError ? '#e74c3c' : props.theme.input.border)};
   border-radius: 8px;
   font-size: 1rem;
   color: ${props => props.theme.text.primary};
@@ -38,6 +41,17 @@ const Input = styled.input<{ theme: ThemeType }>`
   &::placeholder {
     color: ${props => props.theme.input.placeholder};
   }
+
+  &:focus {
+    outline: none;
+    border-color: ${props =>
+      props.$hasError ? '#e74c3c' : props.theme.button.primaryHover};
+  }
+`;
+
+const ErrorMessage = styled.span`
+  font-size: 0.8rem;
+  color: #e74c3c;
 `;
 
 const Divider = styled.div<{ theme: ThemeType }>`
@@ -88,20 +102,101 @@ const ToggleLink = styled.button<{ theme: ThemeType }>`
 
 type Props = {
   onToggleToSignUp: () => void;
+  onSignIn: (email: string, password: string) => void;
+  onGoogleSignUp: () => void;
+  onGithubSignUp: () => void;
+  loading: string;
 };
 
-const SignInForm = ({ onToggleToSignUp }: Props) => {
+const SignInForm = ({
+  onToggleToSignUp,
+  onSignIn,
+  onGithubSignUp,
+  onGoogleSignUp,
+  loading,
+}: Props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState({
+    email: '',
+    password: '',
+  });
+
+  const validateEmail = (email: string) => {
+    if (!email) {
+      return 'Email is required';
+    }
+    if (!isValidEmail(email)) {
+      return 'Please enter a valid email address';
+    }
+    return '';
+  };
+
+  const validatePassword = (password: string) => {
+    if (!password) {
+      return 'Password is required';
+    }
+    if (password.length < 6) {
+      return 'Password must be at least 6 characters long';
+    }
+    return '';
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (errors.email) {
+      setErrors(prev => ({
+        ...prev,
+        email: '',
+      }));
+    }
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPassword(value);
+
+    const newErrors = { ...errors };
+    if (errors.password) {
+      newErrors.password = '';
+    }
+
+    setErrors(newErrors);
+  };
+
+  const handleEmailBlur = () => {
+    setErrors(prev => ({
+      ...prev,
+      email: validateEmail(email),
+    }));
+  };
+
+  const handlePasswordBlur = () => {
+    setErrors(prev => ({
+      ...prev,
+      password: validatePassword(password),
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Sign in attempt:', { email, password });
+
+    const emailError = validateEmail(email);
+    const passwordError = validatePassword(password);
+
+    setErrors({
+      email: emailError,
+      password: passwordError,
+    });
+
+    if (!emailError && !passwordError) {
+      onSignIn(email, password);
+    }
   };
 
-  const handleGoogleSignIn = () => {
-    console.log('Google sign-in clicked');
-  };
+  const isFormValid = !errors.email && !errors.password && email && password;
 
   return (
     <Form>
@@ -112,9 +207,11 @@ const SignInForm = ({ onToggleToSignUp }: Props) => {
           type='email'
           placeholder='Enter your email'
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={handleEmailChange}
+          onBlur={handleEmailBlur}
           required
         />
+        {errors.email && <ErrorMessage>{errors.email}</ErrorMessage>}
       </InputGroup>
 
       <InputGroup>
@@ -124,12 +221,21 @@ const SignInForm = ({ onToggleToSignUp }: Props) => {
           type='password'
           placeholder='Enter your password'
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={handlePasswordChange}
+          onBlur={handlePasswordBlur}
           required
         />
+        {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
       </InputGroup>
 
-      <Button fullWidth size='large' variant='primary' onClick={handleSubmit}>
+      <Button
+        fullWidth
+        size='large'
+        variant='primary'
+        disabled={!isFormValid}
+        onClick={handleSubmit}
+        icon={loading === 'email' ? <Loader size={20} /> : null}
+      >
         Sign In
       </Button>
 
@@ -137,12 +243,22 @@ const SignInForm = ({ onToggleToSignUp }: Props) => {
 
       <Button
         fullWidth
-        icon={<GoogleIcon />}
+        icon={loading === 'google' ? <Loader size={20} /> : <GoogleIcon />}
         size='large'
         variant='secondary'
-        onClick={handleGoogleSignIn}
+        onClick={onGoogleSignUp}
       >
-        Sign in with Google
+        Google
+      </Button>
+
+      <Button
+        fullWidth
+        icon={loading === 'github' ? <Loader size={20} /> : <GithubIcon />}
+        size='large'
+        variant='secondary'
+        onClick={onGithubSignUp}
+      >
+        Github
       </Button>
 
       <ToggleText>

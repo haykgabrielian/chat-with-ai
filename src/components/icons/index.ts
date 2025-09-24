@@ -14,3 +14,7 @@ export { default as ShareIcon } from './ShareIcon';
 export { default as GlobeIcon } from './GlobeIcon';
 export { default as WarningIcon } from './WarningIcon';
 export { default as PinIcon } from './PinIcon';
+export { default as GithubIcon } from './GithubIcon';
+export { default as SuccessIcon } from './SuccessIcon';
+export { default as SettingsIcon } from './SettingsIcon';
+export { default as LogoutIcon } from './LogoutIcon';

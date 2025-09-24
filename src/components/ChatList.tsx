@@ -1,20 +1,30 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import styled from 'styled-components';
 import { useNavigate } from '@tanstack/react-router';
 
 import {
   ChatIcon,
-  LoginIcon,
+  LogoutIcon,
   PinIcon,
+  SettingsIcon,
   TrashIcon,
   UserIcon,
 } from '@/components/icons';
 import Button from '@/components/Button';
+import { logout } from '@/auth/auth';
 
+import Avatar from '@/components/Avatar';
 import { Chat } from '@/types/common';
 import ConfirmationPopup from '@/components/ConfirmationPopup';
 import Search from '@/components/Search';
 import { ThemeType } from '@/helpers/themes';
+import { useAuth } from '@/hooks/useAuth';
 
 type Props = {
   chats: Chat[];
@@ -50,6 +60,7 @@ const List = styled.ul`
 
 const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   position: relative;
+  overflow: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -78,13 +89,14 @@ const ChatName = styled.span`
 
 const ButtonGroup = styled.div`
   position: absolute;
-  right: 2px;
+  right: -60px;
   display: flex;
   gap: 4px;
   align-items: center;
   background: ${props => props.theme.background.chatItemHover};
   opacity: 0;
   border-radius: 8px;
+  transition: all 0.2s ease;
 `;
 
 const DeleteButton = styled.button<{ theme: ThemeType }>`
@@ -138,6 +150,7 @@ const PinButton = styled.button<{ theme: ThemeType; $isPinned: boolean }>`
 const ChatItemContainerWithButtons = styled.div`
   &:hover ${ButtonGroup} {
     opacity: 1;
+    right: 2px;
   }
 `;
 
@@ -162,8 +175,47 @@ const SectionHeader = styled.div<{ theme: ThemeType }>`
 `;
 
 const Footer = styled.div`
+  position: relative;
   padding: 20px 0;
   flex-shrink: 0;
+`;
+
+const UserMenu = styled.div<{ theme: ThemeType }>`
+  position: absolute;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: ${props => props.theme.background.chatItemSelected};
+  border-radius: 8px;
+  z-index: 1000;
+  overflow: hidden;
+`;
+
+const UserMenuItem = styled.button<{ theme: ThemeType }>`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: ${props => props.theme.text.primary};
+  opacity: ${props => (props.disabled ? 0.6 : 1)};
+  
+  &:hover {
+    background-color: ${props => (props.disabled ? null : '#6d7288')};
+  }
+`;
+
+const UserMenuItemText = styled.span<{ theme: ThemeType }>`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const NoChatsContainer = styled.div`
@@ -209,11 +261,13 @@ const ChatList = ({
   removeChat,
   togglePin,
 }: Props) => {
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [query, setQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [chatToDelete, setChatToDelete] = useState<string | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -221,6 +275,23 @@ const ChatList = ({
     }, 800);
     return () => clearTimeout(handler);
   }, [query]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowUserMenu(false);
+      }
+    };
+
+    if (showUserMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [showUserMenu]);
 
   const { pinnedChats, unpinnedChats } = useMemo(() => {
     const filtered = [...chats].filter(chat =>
@@ -278,8 +349,29 @@ const ChatList = ({
   };
 
   const handleLogin = () => {
-    setIsLoggedIn(false);
     navigate({ to: '/authentication' });
+  };
+
+  const handleUserButtonClick = () => {
+    if (user) {
+      setShowUserMenu(!showUserMenu);
+    } else {
+      handleLogin();
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      setShowUserMenu(false);
+    } catch (error) {
+      console.error('Failed to logout:', error);
+    }
+  };
+
+  const handleSettings = () => {
+    setShowUserMenu(false);
+    navigate({ to: '/about' });
   };
 
   const renderChatItem = (chat: Chat) => (
@@ -359,28 +451,32 @@ const ChatList = ({
             )}
           </List>
         </ChatListContainer>
-        <Footer>
-          {isLoggedIn ? (
-            <Button
-              fullWidth
-              size='medium'
-              icon={<UserIcon size={16} />}
-              variant='primary'
-              onClick={handleLogin}
-            >
-              John Doe
-            </Button>
-          ) : (
-            <Button
-              fullWidth
-              size='medium'
-              icon={<LoginIcon size={16} />}
-              variant='primary'
-              onClick={handleLogin}
-            >
-              Login
-            </Button>
+        <Footer ref={userMenuRef}>
+          {showUserMenu && user && (
+            <UserMenu>
+              <UserMenuItem disabled>
+                <UserIcon size={16} />
+                <UserMenuItemText>{user && user.email}</UserMenuItemText>
+              </UserMenuItem>
+              <UserMenuItem onClick={handleSettings}>
+                <SettingsIcon size={16} />
+                <UserMenuItemText>Settings</UserMenuItemText>
+              </UserMenuItem>
+              <UserMenuItem onClick={handleLogout}>
+                <LogoutIcon size={16} />
+                <UserMenuItemText>Logout</UserMenuItemText>
+              </UserMenuItem>
+            </UserMenu>
           )}
+          <Button
+            fullWidth
+            size='medium'
+            icon={<Avatar user={user} />}
+            variant='primary'
+            onClick={handleUserButtonClick}
+          >
+            {user ? user.displayName || user.email || 'User' : 'Login'}
+          </Button>
         </Footer>
       </Container>
       {chatToDelete !== null && (

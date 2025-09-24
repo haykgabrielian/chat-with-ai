@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect, useState } from 'react';
 import { ThemeProvider } from 'styled-components';
 
 import { darkTheme, lightTheme } from '@/helpers/themes';
-import { ThemeToggleContext } from '@/context//ThemeContext';
+import { ThemeToggleContext } from '@/context/ThemeContext';
 
 const AppThemeProvider = ({ children }: { children: ReactNode }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);

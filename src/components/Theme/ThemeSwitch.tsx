@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 
-import { MoonIcon, SunIcon } from './icons';
-import { ThemeToggleContext } from '@/context//ThemeContext';
+import { MoonIcon, SunIcon } from '../icons';
+import { ThemeToggleContext } from '@/context/ThemeContext';
 import { ThemeType } from '@/helpers/themes';
 
 const StyledButton = styled.button<{ theme: ThemeType }>`

@@ -1,12 +1,7 @@
-import { Link } from '@tanstack/react-router';
+import EmptyState from '@/components/EmptyState';
 
 const About = () => {
-  return (
-    <div>
-      <h1>About Page</h1>
-      <Link to='/'>Go to Home</Link>
-    </div>
-  );
+  return <EmptyState />;
 };
 
 export default About;

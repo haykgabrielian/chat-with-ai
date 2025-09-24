@@ -4,7 +4,9 @@ import styled from 'styled-components';
 
 import { RouterProvider } from '@tanstack/react-router';
 
-import AppThemeProvider from '@/components/AppThemeProvider';
+import AppThemeProvider from '@/components/Theme/AppThemeProvider';
+import AuthProvider from '@/auth/AuthContext';
+
 import { ThemeType } from '@/helpers/themes';
 
 import './main.css';
@@ -18,9 +20,11 @@ const AppContainer = styled.div<{ theme: ThemeType }>`
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <AppThemeProvider>
-      <AppContainer>
-        <RouterProvider router={router} />
-      </AppContainer>
+      <AuthProvider>
+        <AppContainer>
+          <RouterProvider router={router} />
+        </AppContainer>
+      </AuthProvider>
     </AppThemeProvider>
   </React.StrictMode>
 );
