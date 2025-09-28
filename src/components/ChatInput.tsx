@@ -117,6 +117,11 @@ const ChatInput = ({
     setMessage(selectedQuestion);
   }, [selectedQuestion]);
 
+  useEffect(() => {
+    if (isLoading) return;
+    textareaRef.current?.focus();
+  }, [isLoading]);
+
   const handleSend = () => {
     if (!message.trim() || isLoading) return;
     onQuestionChange('');
