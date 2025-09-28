@@ -6,8 +6,8 @@ import ChatInput from '@/components/ChatInput';
 import { ThemeType } from '@/helpers/themes';
 import styled from 'styled-components';
 
-import SuggestionScreen from '@/components/SuggestionScreen';
 import { ShareIcon } from '@/components/icons';
+import SuggestionScreen from '@/components/SuggestionScreen';
 import ThemeToggleButton from '@/components/Theme/ThemeSwitch';
 
 type Props = {

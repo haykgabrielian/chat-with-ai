@@ -87,7 +87,7 @@ const ChatName = styled.span`
   font-size: 14px;
 `;
 
-const ButtonGroup = styled.div`
+const ButtonGroup = styled.div<{ theme: ThemeType }>`
   position: absolute;
   right: -60px;
   display: flex;

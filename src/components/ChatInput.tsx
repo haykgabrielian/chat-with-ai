@@ -13,7 +13,7 @@ type Props = {
   onQuestionChange: (question: string) => void;
 };
 
-const InputContainer = styled.div`
+const InputContainer = styled.div<{ theme: ThemeType }>`
   position: absolute;
   bottom: 20px;
   left: 50%;
