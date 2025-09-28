@@ -17,25 +17,28 @@ const InputContainer = styled.div`
   position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
   width: 920px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: ${props => props.theme.input.background};
+  border: 1px solid ${props => props.theme.button.primary};
   z-index: 5;
 `;
 
 const Input = styled.textarea<{ theme: ThemeType }>`
   width: 100%;
-  min-height: 94px;
-  max-height: 200px;
-  padding: 14px 16px 54px 16px;
-  background: ${props => props.theme.input.background};
-  border-radius: 12px;
+  max-height: 150px;
+  padding: 10px 14px;
+  background: transparent;
   color: ${props => props.theme.text.primary};
   font-size: 16px;
+  border: none;
   line-height: 1.5;
   resize: none;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.2s ease;
   cursor: ${props => (props.disabled ? 'not-allowed' : 'text')};
 
   &::placeholder {
@@ -44,13 +47,11 @@ const Input = styled.textarea<{ theme: ThemeType }>`
 `;
 
 const ButtonContainer = styled.div`
-  position: absolute;
-  bottom: 15px;
-  gap: 8px;
   display: flex;
   justify-content: space-between;
+  gap: 8px;
   width: 100%;
-  padding: 0 14px;
+  padding: 10px 14px;
 `;
 
 const SearchButton = styled.button<{ theme: ThemeType; $isSearch: boolean }>`
