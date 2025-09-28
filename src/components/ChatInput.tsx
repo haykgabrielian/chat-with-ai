@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { GlobeIcon, SendIcon } from '@/components/icons';
@@ -9,6 +9,8 @@ type Props = {
   onSendMessage: (message: string, search: boolean) => void;
   isLoading: boolean;
   placeholder?: string;
+  selectedQuestion: string;
+  onQuestionChange: (question: string) => void;
 };
 
 const InputContainer = styled.div`
@@ -103,13 +105,20 @@ const ChatInput = ({
   onSendMessage,
   isLoading,
   placeholder = 'Message to ZruyC...',
+  selectedQuestion,
+  onQuestionChange,
 }: Props) => {
   const [message, setMessage] = useState('');
   const [isSearch, setIsSearch] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
+  useEffect(() => {
+    setMessage(selectedQuestion);
+  }, [selectedQuestion]);
+
   const handleSend = () => {
     if (!message.trim() || isLoading) return;
+    onQuestionChange('');
     onSendMessage(message, isSearch);
     setMessage('');
     if (textareaRef.current) {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 import { Chat, LoadingState, Msg } from '@/types/common';
@@ -181,7 +181,15 @@ const ChatWindow = ({
   loadingState,
 }: Props) => {
   const messagesContentRef = useRef<HTMLDivElement | null>(null);
+  const [selectedQuestion, setSelectedQuestion] = useState<string>('');
 
+  useEffect(() => {
+    setSelectedQuestion('');
+  }, [selectedChat]);
+
+  const handleQuestionChange = (question: string) => {
+    setSelectedQuestion(question);
+  };
   const handleSendMessage = (message: string, search: boolean) => {
     if (!selectedChat) {
       createNewChat(message, search);
@@ -224,12 +232,14 @@ const ChatWindow = ({
               )}
           </MessagesContainer>
         ) : (
-          <EmptyState />
+          <EmptyState onQuestionSelect={handleQuestionChange} />
         )}
       </Content>
       <ChatInput
         onSendMessage={handleSendMessage}
         isLoading={loadingState.isLoading}
+        selectedQuestion={selectedQuestion}
+        onQuestionChange={handleQuestionChange}
       />
     </Container>
   );

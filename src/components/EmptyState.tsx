@@ -1,162 +1,155 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
-import Logo from '@/components/Logo';
 import { ThemeType } from '@/helpers/themes';
+import questionsData from '@/helpers/questions';
 
-const Container = styled.div`
+interface EmptyStateProps {
+  onQuestionSelect: (question: string) => void;
+}
+
+const Container = styled.div<{ theme: ThemeType }>`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100%;
-  padding: 20px;
-  text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
+  width: 100%;
+  background: ${props => props.theme.background.primary};
 `;
 
-const IconContainer = styled.div`
-  margin-bottom: 20px;
-  position: relative;
-`;
-
-const MainIcon = styled.div`
-  width: 80px;
-  height: 80px;
+const Content = styled.div<{ theme: ThemeType }>`
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
-  margin: 0 auto 12px;
+  max-width: 950px;
+`;
+
+const Header = styled.div<{ theme: ThemeType }>`
+  margin-bottom: 40px;
+  text-align: left;
 `;
 
 const Title = styled.h1<{ theme: ThemeType }>`
-  font-size: 2rem;
-  font-weight: 700;
-  color: ${props => props.theme.text.white};
   margin-bottom: 12px;
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: ${props => props.theme.text.primary};
 `;
 
 const Subtitle = styled.p<{ theme: ThemeType }>`
+  max-width: 600px;
+  margin: 0;
   font-size: 1.1rem;
   color: ${props => props.theme.text.secondary};
-  margin-bottom: 24px;
-  line-height: 1.5;
 `;
 
-const FeaturesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin: 20px 0;
-  width: 100%;
-`;
-
-const FeatureCard = styled.div<{ theme: ThemeType }>`
-  background: ${props => props.theme.background.messageAI};
-  border-radius: 12px;
-  padding: 16px;
-  text-align: left;
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+const TabsContainer = styled.div<{ theme: ThemeType }>`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 32px;
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
   }
 `;
 
-const FeatureTitle = styled.h3<{ theme: ThemeType }>`
-  font-size: 1rem;
-  font-weight: 600;
-  color: ${props => props.theme.text.primary};
-  margin-bottom: 6px;
+const Tab = styled.button<{ theme: ThemeType; $isActive: boolean }>`
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background-color: ${props =>
+    props.$isActive ? props.theme.status.success : props.theme.button.primary};
+  color: ${props => props.theme.text.white};
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
+  white-space: nowrap;
 
   svg {
-    width: 14px;
-    height: 14px;
-    fill: ${props => props.theme.button.primaryHover};
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: ${props =>
+      props.$isActive
+        ? props.theme.status.success
+        : props.theme.button.primaryHover};
   }
 `;
 
-const FeatureDescription = styled.p<{ theme: ThemeType }>`
-  font-size: 0.85rem;
-  color: ${props => props.theme.text.secondary};
-  line-height: 1.4;
+const Questions = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 16px;
+  max-width: 800px;
+
+  @media (max-width: 768px) {
+    gap: 12px;
+  }
 `;
 
-const EmptyState = () => {
+const Question = styled.button<{ theme: ThemeType }>`
+  width: fit-content;
+  padding: 6px 12px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  color: ${props => props.theme.text.primary};
+  border-radius: 10px;
+  text-align: left;
+  background-color: transparent;
+  &:hover {
+    background-color: ${props => props.theme.background.chatItemHover};
+  }
+`;
+
+const EmptyState = ({ onQuestionSelect }: EmptyStateProps) => {
+  const [activeTab, setActiveTab] = useState<string>('general');
+
+  const handleQuestionClick = (question: string) => {
+    onQuestionSelect(question);
+  };
+
+  const currentQuestions =
+    questionsData.categories.find(cat => cat.id === activeTab)?.questions || [];
+
   return (
     <Container>
-      <IconContainer>
-        <MainIcon>
-          <Logo size='xl' />
-        </MainIcon>
-      </IconContainer>
-
-      <Title>Welcome to ZruyC</Title>
-      <Subtitle>
-        Your intelligent conversation partner powered by advanced AI. Start
-        chatting to explore the possibilities!
-      </Subtitle>
-
-      <FeaturesGrid>
-        <FeatureCard>
-          <FeatureTitle>
-            <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' />
-            </svg>
-            Smart Conversations
-          </FeatureTitle>
-          <FeatureDescription>
-            Engage in natural, intelligent conversations with AI that
-            understands context and provides thoughtful responses.
-          </FeatureDescription>
-        </FeatureCard>
-
-        <FeatureCard>
-          <FeatureTitle>
-            <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z' />
-            </svg>
-            Persistent Memory
-          </FeatureTitle>
-          <FeatureDescription>
-            Your conversations are saved locally, so you can continue where you
-            left off and revisit past discussions.
-          </FeatureDescription>
-        </FeatureCard>
-
-        <FeatureCard>
-          <FeatureTitle>
-            <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' />
-            </svg>
-            Privacy First
-          </FeatureTitle>
-          <FeatureDescription>
-            Your data stays on your device. No cloud storage, no tracking -
-            complete privacy and control over your conversations.
-          </FeatureDescription>
-        </FeatureCard>
-
-        <FeatureCard>
-          <FeatureTitle>
-            <svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'>
-              <path d='M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' />
-            </svg>
-            Beautiful Interface
-          </FeatureTitle>
-          <FeatureDescription>
-            Enjoy a clean, modern interface designed for seamless conversations
-            with smooth animations and intuitive controls.
-          </FeatureDescription>
-        </FeatureCard>
-      </FeaturesGrid>
+      <Content>
+        <Header>
+          <Title>How can I help you today?</Title>
+          <Subtitle>
+            Choose from these popular topics or ask me anything you'd like to
+            know
+          </Subtitle>
+        </Header>
+        <TabsContainer>
+          {questionsData.categories.map(category => {
+            const IconComponent = category.icon;
+            return (
+              <Tab
+                key={category.id}
+                $isActive={activeTab === category.id}
+                onClick={() => setActiveTab(category.id)}
+              >
+                <IconComponent />
+                {category.label}
+              </Tab>
+            );
+          })}
+        </TabsContainer>
+        <Questions>
+          {currentQuestions.map((question, index) => (
+            <Question key={index} onClick={() => handleQuestionClick(question)}>
+              {question}
+            </Question>
+          ))}
+        </Questions>
+      </Content>
     </Container>
   );
 };

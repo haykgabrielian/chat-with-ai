@@ -206,7 +206,7 @@ const UserMenuItem = styled.button<{ theme: ThemeType }>`
   transition: background-color 0.2s ease;
   color: ${props => props.theme.text.primary};
   opacity: ${props => (props.disabled ? 0.6 : 1)};
-  
+
   &:hover {
     background-color: ${props => (props.disabled ? null : '#6d7288')};
   }
