@@ -30,7 +30,7 @@ const InputContainer = styled.div`
 const Input = styled.textarea<{ theme: ThemeType }>`
   width: 100%;
   max-height: 150px;
-  padding: 10px 14px;
+  padding: 10px 14px 8px 14px;
   background: transparent;
   color: ${props => props.theme.text.primary};
   font-size: 16px;
@@ -51,7 +51,7 @@ const ButtonContainer = styled.div`
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 14px 10px 14px;
 `;
 
 const SearchButton = styled.button<{ theme: ThemeType; $isSearch: boolean }>`
