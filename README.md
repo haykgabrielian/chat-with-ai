@@ -56,22 +56,10 @@ src/
 ├── components/
 │   ├── icons/           # Reusable SVG icon components
 │   │   ├── index.ts     # Icon exports
-│   │   ├── PlusIcon.tsx # New chat icon
-│   │   ├── TrashIcon.tsx # Delete chat icon
-│   │   ├── ChevronLeftIcon.tsx # Sidebar toggle icon
-│   │   ├── SendIcon.tsx # Send message icon
-│   │   ├── HamburgerIcon.tsx # Mobile menu toggle
-│   │   ├── LoginIcon.tsx # User authentication
-│   │   ├── UserIcon.tsx # User profile
-│   │   ├── SearchIcon.tsx # Search functionality
-│   │   ├── CloseIcon.tsx # Close/clear actions
 │   │   └── ChatIcon.tsx # Chat/conversation icon
 │   ├── ChatList.tsx     # Sidebar with chat management & search
 │   ├── ChatWindow.tsx   # Main chat interface
 │   ├── ChatInput.tsx    # Message input component
-│   ├── Header.tsx       # Application header
-│   ├── EmptyState.tsx   # Welcome screen component
-│   ├── Search.tsx       # Search input component
 │   └── SidebarContainer.tsx # Sidebar wrapper with toggle
 ├── hooks/
 │   └── useChats.ts      # Chat state management with search

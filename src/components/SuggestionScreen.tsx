@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import { ThemeType } from '@/helpers/themes';
 import questionsData from '@/helpers/questions';
 
-interface EmptyStateProps {
+interface SuggestionScreenProps {
   onQuestionSelect: (question: string) => void;
 }
 
@@ -107,7 +107,7 @@ const Question = styled.button<{ theme: ThemeType }>`
   }
 `;
 
-const EmptyState = ({ onQuestionSelect }: EmptyStateProps) => {
+const SuggestionScreen = ({ onQuestionSelect }: SuggestionScreenProps) => {
   const [activeTab, setActiveTab] = useState<string>('general');
 
   const handleQuestionClick = (question: string) => {
@@ -154,4 +154,4 @@ const EmptyState = ({ onQuestionSelect }: EmptyStateProps) => {
   );
 };
 
-export default EmptyState;
+export default SuggestionScreen;

@@ -6,7 +6,7 @@ import ChatInput from '@/components/ChatInput';
 import { ThemeType } from '@/helpers/themes';
 import styled from 'styled-components';
 
-import EmptyState from '@/components/EmptyState';
+import SuggestionScreen from '@/components/SuggestionScreen';
 import { ShareIcon } from '@/components/icons';
 import ThemeToggleButton from '@/components/Theme/ThemeSwitch';
 
@@ -232,7 +232,7 @@ const ChatWindow = ({
               )}
           </MessagesContainer>
         ) : (
-          <EmptyState onQuestionSelect={handleQuestionChange} />
+          <SuggestionScreen onQuestionSelect={handleQuestionChange} />
         )}
       </Content>
       <ChatInput
