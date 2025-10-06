@@ -23,6 +23,13 @@ const Content = styled.div<{ theme: ThemeType }>`
   align-items: flex-start;
   justify-content: center;
   max-width: 950px;
+  @media (max-width: 1200px) {
+    width: 520px;
+    padding: 0 10px;
+  }
+  @media (max-width: 540px) {
+    width: 320px;
+  }
 `;
 
 const Header = styled.div<{ theme: ThemeType }>`
@@ -46,6 +53,7 @@ const Subtitle = styled.p<{ theme: ThemeType }>`
 
 const TabsContainer = styled.div<{ theme: ThemeType }>`
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 32px;
   @media (max-width: 768px) {

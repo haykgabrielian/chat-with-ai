@@ -35,11 +35,19 @@ const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  width: 950px;
+  padding: 10px 16px;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 10px 16px;
-  width: 950px;
   margin: 0 auto;
+
+  @media (max-width: 1200px) {
+    padding: 10px 4px;
+    width: 530px;
+  }
+  @media (max-width: 540px) {
+    max-width: 320px;
+  }
 `;
 
 const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
@@ -54,6 +62,12 @@ const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
     padding: 8px;
     margin-top: 8px;
     z-index: 1;
+    @media (max-width: 1200px) {
+      max-width: 500px;
+    }
+    @media (max-width: 540px) {
+      max-width: 320px;
+    }
     &:before {
         content: "";
         position: absolute;
@@ -160,7 +174,7 @@ const ShareButton = styled.button<{ theme: ThemeType }>`
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
-  z-index: 10;
+  z-index: 5;
   padding: 8px;
 
   &:hover {

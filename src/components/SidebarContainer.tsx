@@ -18,10 +18,29 @@ type Props = {
 };
 
 const Container = styled.div<{ $isOpen: boolean }>`
-  width: 250px;
-  transition: margin-left 0.2s ease;
-  margin-left: ${props => (props.$isOpen ? '0' : '-250px')};
   position: relative;
+  width: 250px;
+  margin-left: ${props => (props.$isOpen ? '0' : '-250px')};
+  transition: margin-left 0.2s ease;
+  z-index: 7;
+
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+`;
+
+const Overlay = styled.div<{ $isOpen: boolean }>`
+  position: absolute;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 6;
+  @media (max-width: 768px) {
+    display: ${props => (props.$isOpen ? 'block' : 'none')};
+  }
 `;
 
 const HamburgerButton = styled.button<{ theme: ThemeType }>`
@@ -63,18 +82,21 @@ const SidebarContainer = ({
   toggleSidebar,
 }: Props) => {
   return (
-    <Container $isOpen={isOpen}>
-      <HamburgerButton onClick={toggleSidebar}>
-        <HamburgerIcon isOpen={isOpen} />
-      </HamburgerButton>
-      <ChatList
-        chats={chats}
-        selectChat={selectChat}
-        selectedChatId={selectedChatId}
-        removeChat={removeChat}
-        togglePin={togglePin}
-      />
-    </Container>
+    <>
+      <Container $isOpen={isOpen}>
+        <HamburgerButton onClick={toggleSidebar}>
+          <HamburgerIcon isOpen={isOpen} />
+        </HamburgerButton>
+        <ChatList
+          chats={chats}
+          selectChat={selectChat}
+          selectedChatId={selectedChatId}
+          removeChat={removeChat}
+          togglePin={togglePin}
+        />
+      </Container>
+      <Overlay onClick={toggleSidebar} $isOpen={isOpen} />
+    </>
   );
 };
 

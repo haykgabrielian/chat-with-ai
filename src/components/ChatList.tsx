@@ -39,17 +39,20 @@ const Container = styled.div<{ theme: ThemeType }>`
   flex-direction: column;
   width: 100%;
   height: 100vh;
-  padding: 80px 10px 0 10px;
+  padding-top: 80px;
   background-color: ${props => props.theme.background.sidebar};
 `;
 
 const Header = styled.div`
   flex-shrink: 0;
+  padding: 0 10px;
 `;
 
 const ChatListContainer = styled.div`
   flex: 1;
+  padding: 0 10px;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const List = styled.ul`
@@ -60,7 +63,6 @@ const List = styled.ul`
 
 const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   position: relative;
-  overflow: auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -176,7 +178,7 @@ const SectionHeader = styled.div<{ theme: ThemeType }>`
 
 const Footer = styled.div`
   position: relative;
-  padding: 20px 0;
+  padding: 20px 10px;
   flex-shrink: 0;
 `;
 

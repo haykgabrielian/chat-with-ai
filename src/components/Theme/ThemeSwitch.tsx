@@ -17,7 +17,7 @@ const StyledButton = styled.button<{ theme: ThemeType }>`
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
-  z-index: 10;
+  z-index: 5;
   padding: 8px;
 
   &:hover {

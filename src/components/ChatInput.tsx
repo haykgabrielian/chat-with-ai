@@ -25,6 +25,14 @@ const InputContainer = styled.div<{ theme: ThemeType }>`
   background: ${props => props.theme.input.background};
   border: 1px solid ${props => props.theme.button.primary};
   z-index: 5;
+
+  @media (max-width: 1200px) {
+    width: 520px;
+  }
+
+  @media (max-width: 540px) {
+    width: 320px;
+  }
 `;
 
 const Input = styled.textarea<{ theme: ThemeType }>`
