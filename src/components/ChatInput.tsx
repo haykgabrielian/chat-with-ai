@@ -13,26 +13,19 @@ type Props = {
   onQuestionChange: (question: string) => void;
 };
 
-const InputContainer = styled.div<{ theme: ThemeType }>`
+const Container = styled.div<{ theme: ThemeType }>`
   position: absolute;
   bottom: 20px;
   left: 50%;
   display: flex;
   flex-direction: column;
-  width: 920px;
+  max-width: 920px;
+  width: calc(100% - 40px);
   transform: translateX(-50%);
   border-radius: 12px;
   background: ${props => props.theme.input.background};
   border: 1px solid ${props => props.theme.button.primary};
   z-index: 5;
-
-  @media (max-width: 1200px) {
-    width: 520px;
-  }
-
-  @media (max-width: 540px) {
-    width: 320px;
-  }
 `;
 
 const Input = styled.textarea<{ theme: ThemeType }>`
@@ -160,7 +153,7 @@ const ChatInput = ({
   };
 
   return (
-    <InputContainer>
+    <Container>
       <Input
         ref={textareaRef}
         value={message}
@@ -189,7 +182,7 @@ const ChatInput = ({
           {isLoading ? <Loader size={20} /> : <SendIcon />}
         </SendButton>
       </ButtonContainer>
-    </InputContainer>
+    </Container>
   );
 };
 

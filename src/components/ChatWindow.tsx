@@ -29,30 +29,26 @@ const Content = styled.div`
   flex-grow: 1;
   overflow: scroll;
   padding-bottom: 130px;
+
+  @media (max-width: 1370px) {
+    padding-top: 50px;
+  }
 `;
 
 const MessagesContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  width: 950px;
+  max-width: 950px;
+  width: 100%;
   padding: 10px 16px;
   overflow-y: auto;
   overflow-x: hidden;
   margin: 0 auto;
-
-  @media (max-width: 1200px) {
-    padding: 10px 4px;
-    width: 530px;
-  }
-  @media (max-width: 540px) {
-    max-width: 320px;
-  }
 `;
 
 const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
     position: relative;
-    width: max-content;
     max-width: 850px;
     background-color: ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
     color: ${props => props.theme.text.primary};
@@ -62,12 +58,6 @@ const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
     padding: 8px;
     margin-top: 8px;
     z-index: 1;
-    @media (max-width: 1200px) {
-      max-width: 500px;
-    }
-    @media (max-width: 540px) {
-      max-width: 320px;
-    }
     &:before {
         content: "";
         position: absolute;
