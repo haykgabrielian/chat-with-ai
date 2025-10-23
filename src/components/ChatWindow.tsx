@@ -9,6 +9,7 @@ import styled from 'styled-components';
 import { ShareIcon } from '@/components/icons';
 import SuggestionScreen from '@/components/SuggestionScreen';
 import ThemeToggleButton from '@/components/Theme/ThemeSwitch';
+import TypingStatus from '@/components/TypingStatus';
 
 type Props = {
   selectedChat: Chat | null;
@@ -87,7 +88,7 @@ const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
 const TypingIndicator = styled.div<{ theme: ThemeType }>`
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   padding: 12px 16px;
   background-color: ${props => props.theme.background.typingIndicator};
   border-radius: 20px;
@@ -121,24 +122,19 @@ const TypingIndicator = styled.div<{ theme: ThemeType }>`
   }
 `;
 
-const Dot = styled.div<{ $delay: number; theme: ThemeType }>`
+const Dot = styled.span<{ $delay: number; theme: ThemeType }>`
   width: 8px;
   height: 8px;
   background-color: ${props => props.theme.text.secondary};
   border-radius: 50%;
-  animation: typing 1.4s infinite ease-in-out;
+  opacity: 0.4;
+  animation: blink 1s infinite ease-in-out;
   animation-delay: ${props => props.$delay}s;
 
-  @keyframes typing {
-    0%,
-    60%,
-    100% {
-      transform: translateY(0);
-      opacity: 0.4;
-    }
-    30% {
-      transform: translateY(-6px);
+  @keyframes blink {
+    50% {
       opacity: 1;
+      transform: scale(1.2);
     }
   }
 `;
@@ -232,6 +228,7 @@ const ChatWindow = ({
                   <Dot $delay={0} />
                   <Dot $delay={0.2} />
                   <Dot $delay={0.4} />
+                  <TypingStatus />
                 </TypingIndicator>
               )}
           </MessagesContainer>
