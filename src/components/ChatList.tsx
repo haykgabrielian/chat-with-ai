@@ -68,6 +68,7 @@ const ChatItem = styled.li<{ $isSelected: boolean; theme: ThemeType }>`
   align-items: center;
   padding: 6px 10px;
   margin-bottom: 5px;
+  overflow: hidden;
   cursor: pointer;
   color: ${props => props.theme.text.primary};
   border-radius: 10px;
