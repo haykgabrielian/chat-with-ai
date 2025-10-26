@@ -174,6 +174,21 @@ const ShareButton = styled.button<{ theme: ThemeType }>`
   }
 `;
 
+const Cursor = styled.span`
+  color: #9e9ea1;
+  animation: pulse 0.8s ease-in-out infinite;
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+`;
+
 const ChatWindow = ({
   selectedChat,
   sendMessage,
@@ -219,6 +234,10 @@ const ChatWindow = ({
             {selectedChat.messages.map((msg: Msg, index: number) => (
               <Message key={index} $isSentByMe={msg.sender === 'Me'}>
                 <MarkdownRenderer>{msg.text}</MarkdownRenderer>
+                {loadingState.isStreaming &&
+                  index === selectedChat.messages.length - 1 && (
+                    <Cursor>▋</Cursor>
+                  )}
               </Message>
             ))}
             {loadingState.isLoading &&
