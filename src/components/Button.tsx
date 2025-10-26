@@ -2,8 +2,8 @@ import React from 'react';
 import { ThemeType } from '@/helpers/themes';
 import styled from 'styled-components';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
-export type ButtonSize = 'small' | 'medium' | 'large';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'ghost';
+type ButtonSize = 'small' | 'medium' | 'large';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;

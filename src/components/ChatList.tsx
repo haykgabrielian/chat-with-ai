@@ -10,6 +10,7 @@ import { useNavigate } from '@tanstack/react-router';
 
 import {
   ChatIcon,
+  LoginIcon,
   LogoutIcon,
   PinIcon,
   SettingsIcon,
@@ -474,7 +475,7 @@ const ChatList = ({
           <Button
             fullWidth
             size='medium'
-            icon={<Avatar user={user} />}
+            icon={user ? <Avatar user={user} /> : <LoginIcon />}
             variant='primary'
             onClick={handleUserButtonClick}
           >
