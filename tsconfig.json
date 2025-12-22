@@ -3,7 +3,7 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strict": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
@@ -17,7 +17,7 @@
       "@/*": ["./src/*"]
     },
     "typeRoots": ["node_modules/@types"],
-    "types": ["node", "styled-components"]
+    "types": ["node", "styled-components", "vite/client"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
