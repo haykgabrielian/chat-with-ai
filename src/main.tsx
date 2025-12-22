@@ -8,10 +8,13 @@ import AppThemeProvider from '@/components/Theme/AppThemeProvider';
 import AuthProvider from '@/auth/AuthContext';
 
 import { ThemeType } from '@/helpers/themes';
+import { initSentry } from '@/lib/sentry';
 
 import './main.css';
 
 import router from '@/router';
+
+initSentry();
 
 const AppContainer = styled.div<{ theme: ThemeType }>`
   background-color: ${props => props.theme.background.primary};

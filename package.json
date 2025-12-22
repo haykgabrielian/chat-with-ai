@@ -15,6 +15,8 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@sentry/react": "^10.32.1",
+    "@sentry/vite-plugin": "^4.6.1",
     "@tanstack/react-router": "^1.101.0",
     "@types/uuid": "^10.0.0",
     "firebase": "^12.2.1",
@@ -35,7 +37,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@types/styled-components": "^5.1.34",
-    "@vitejs/plugin-react": "^5.0.4",
+    "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
