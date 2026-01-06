@@ -1,5 +1,6 @@
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL = import.meta.env.VITE_GEMINI_API_URL;
+const API_MODEL = import.meta.env.VITE_GEMINI_API_MODEL;
 
 export const fetchGeminiResponse = async (
   messages: { sender: string; text: string; id: string }[],
@@ -16,7 +17,7 @@ export const fetchGeminiResponse = async (
   const tools = [{ google_search: {} }];
 
   const res = await fetch(
-    `${API_URL}streamGenerateContent?key=${API_KEY}&alt=sse`,
+    `${API_URL}/${API_MODEL}:streamGenerateContent?key=${API_KEY}&alt=sse`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -89,11 +90,14 @@ export const generateChatTitle = async (
     },
   ];
 
-  const res = await fetch(`${API_URL}generateContent?key=${API_KEY}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ contents }),
-  });
+  const res = await fetch(
+    `${API_URL}/${API_MODEL}:generateContent?key=${API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents }),
+    }
+  );
 
   if (!res.ok) {
     throw new Error(`HTTP error! status: ${res.status}`);
