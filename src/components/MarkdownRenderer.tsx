@@ -5,6 +5,11 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkBreaks from 'remark-breaks';
 import remarkGfm from 'remark-gfm';
 import styled from 'styled-components';
+import { v4 as uuidv4 } from 'uuid';
+
+import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
+
+import { CopyIcon, SuccessCopiedIcon } from './icons';
 
 const MarkdownWrapper = styled.div`
   font-size: 0.875rem;
@@ -48,6 +53,7 @@ const MarkdownWrapper = styled.div`
     overflow-x: auto;
     font-size: 0.8rem;
     margin: 1rem 0;
+    position: relative;
   }
 
   table {
@@ -90,12 +96,107 @@ const MarkdownWrapper = styled.div`
   }
 `;
 
+const CodeBlockContainer = styled.pre`
+  position: relative;
+
+  &:hover .copy-button {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  code {
+    display: block;
+    padding: 0;
+    background: transparent;
+  }
+`;
+
+const CopyButton = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s,
+    background 0.2s;
+  z-index: 10;
+  color: inherit;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+  }
+
+  &:focus {
+    background: rgba(255, 255, 255, 0.2);
+    outline: none;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+`;
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const CodeBlock = ({ children, ...props }: any) => {
+  const { copyToClipboard, isCopied } = useCopyToClipboard();
+  const codeRef = React.useRef<HTMLPreElement>(null);
+
+  // Generate unique ID for this code block
+  const codeId = React.useMemo(() => `code-${uuidv4()}`, []);
+
+  const handleCopy = () => {
+    // Get text from code element directly
+    const codeElement = codeRef.current?.querySelector('code');
+    const codeText = codeElement?.textContent || codeElement?.innerText || '';
+
+    if (codeText) {
+      copyToClipboard(codeText, codeId);
+    }
+  };
+
+  return (
+    <CodeBlockContainer {...props} ref={codeRef}>
+      {children}
+      <CopyButton
+        className='copy-button'
+        onClick={handleCopy}
+        aria-label='Copy code'
+        title={isCopied(codeId) ? 'Copied!' : 'Copy code'}
+      >
+        {isCopied(codeId) ? (
+          <SuccessCopiedIcon size={16} />
+        ) : (
+          <CopyIcon size={16} />
+        )}
+      </CopyButton>
+    </CodeBlockContainer>
+  );
+};
+
 const MarkdownRenderer = ({ children }: { children: string }) => {
   return (
     <MarkdownWrapper>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight]}
+        components={{
+          pre: CodeBlock,
+        }}
       >
         {children}
       </ReactMarkdown>

@@ -23,3 +23,5 @@ export { default as LearnIcon } from './LearnIcon';
 export { default as PencilIcon } from './PencilIcon';
 export { default as ProductivityIcon } from './ProductivityIcon';
 export { default as BulbIcon } from './BulbIcon';
+export { default as CopyIcon } from './CopyIcon';
+export { default as SuccessCopiedIcon } from './SuccessCopiedIcon';
