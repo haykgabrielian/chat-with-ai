@@ -1,11 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { HamburgerIcon } from '@/components/icons';
-
 import { Chat } from '@/types/common';
 import ChatList from '@/components/ChatList';
-import { ThemeType } from '@/helpers/themes';
+import SidebarMenu from '@/components/SidebarMenu';
 
 type Props = {
   isOpen: boolean;
@@ -43,35 +41,6 @@ const Overlay = styled.div<{ $isOpen: boolean }>`
   }
 `;
 
-const HamburgerButton = styled.button<{ theme: ThemeType }>`
-  position: fixed;
-  top: 20px;
-  left: 10px;
-  width: 38px;
-  height: 38px;
-  background-color: ${props => props.theme.button.primary};
-  color: ${props => props.theme.text.white};
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s ease;
-  z-index: 10;
-  padding: 8px;
-
-  &:hover {
-    background-color: ${props => props.theme.button.primaryHover};
-  }
-
-  svg {
-    width: 16px;
-    height: 16px;
-    stroke: currentColor;
-  }
-`;
-
 const SidebarContainer = ({
   isOpen,
   chats,
@@ -84,9 +53,12 @@ const SidebarContainer = ({
   return (
     <>
       <Container $isOpen={isOpen}>
-        <HamburgerButton onClick={toggleSidebar}>
-          <HamburgerIcon isOpen={isOpen} />
-        </HamburgerButton>
+        <SidebarMenu
+          isOpen={isOpen}
+          toggleSidebar={toggleSidebar}
+          selectChat={selectChat}
+          selectedChatId={selectedChatId}
+        />
         <ChatList
           chats={chats}
           selectChat={selectChat}

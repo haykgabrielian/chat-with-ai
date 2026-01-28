@@ -21,6 +21,7 @@ export { default as LogoutIcon } from './LogoutIcon';
 export { default as CodeIcon } from './CodeIcon';
 export { default as LearnIcon } from './LearnIcon';
 export { default as PencilIcon } from './PencilIcon';
+export { default as PlusIcon } from './PlusIcon';
 export { default as ProductivityIcon } from './ProductivityIcon';
 export { default as BulbIcon } from './BulbIcon';
 export { default as CopyIcon } from './CopyIcon';

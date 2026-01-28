@@ -420,6 +420,7 @@ const ChatList = ({
             query={query}
             onChange={handleSearchChange}
             onClear={handleSearchClear}
+            inputId='chat-search-input'
           />
         </Header>
         <ChatListContainer>

@@ -65,6 +65,7 @@ type Props = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
   placeholder?: string;
+  inputId?: string;
 };
 
 const Search = ({
@@ -72,6 +73,7 @@ const Search = ({
   onChange,
   onClear,
   placeholder = 'Search chats...',
+  inputId,
 }: Props) => {
   return (
     <SearchContainer>
@@ -79,6 +81,7 @@ const Search = ({
         <SearchIcon size={16} />
       </SearchIconContainer>
       <SearchInput
+        id={inputId}
         type='text'
         value={query}
         onChange={onChange}

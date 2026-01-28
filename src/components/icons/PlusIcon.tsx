@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface PencilIconProps {
+interface PlusIconProps {
   size?: number;
   className?: string;
 }
 
-const PencilIcon = ({ size = 16, className = '' }: PencilIconProps) => {
+const PlusIcon = ({ size = 16, className = '' }: PlusIconProps) => {
   return (
     <svg
       width={size}
@@ -18,11 +18,10 @@ const PencilIcon = ({ size = 16, className = '' }: PencilIconProps) => {
       strokeLinejoin='round'
       className={className}
     >
-      <path d='M12 20h9' />
-      <path d='M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z' />
-      <line x1='10.5' y1='6.5' x2='17.5' y2='13.5' />
+      <line x1='12' y1='5' x2='12' y2='19' />
+      <line x1='5' y1='12' x2='19' y2='12' />
     </svg>
   );
 };
 
-export default PencilIcon;
+export default PlusIcon;
