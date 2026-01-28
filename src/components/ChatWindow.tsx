@@ -267,7 +267,9 @@ const ChatWindow = ({
       const { scrollTop, scrollHeight, clientHeight } =
         messagesContentRef.current;
       const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-      setShowScrollButton(distanceFromBottom > 50);
+      const shouldShow = distanceFromBottom > 50;
+
+      setShowScrollButton(prev => (prev !== shouldShow ? shouldShow : prev));
     }
   };
 
