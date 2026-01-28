@@ -26,3 +26,4 @@ export { default as ProductivityIcon } from './ProductivityIcon';
 export { default as BulbIcon } from './BulbIcon';
 export { default as CopyIcon } from './CopyIcon';
 export { default as SuccessCopiedIcon } from './SuccessCopiedIcon';
+export { default as ArrowDownIcon } from './ArrowDownIcon';

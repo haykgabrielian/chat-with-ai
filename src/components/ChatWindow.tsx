@@ -6,7 +6,7 @@ import ChatInput from '@/components/ChatInput';
 import { ThemeType } from '@/helpers/themes';
 import styled from 'styled-components';
 
-import { ShareIcon } from '@/components/icons';
+import { ArrowDownIcon, ShareIcon } from '@/components/icons';
 import SuggestionScreen from '@/components/SuggestionScreen';
 import ThemeToggleButton from '@/components/Theme/ThemeSwitch';
 import TypingStatus from '@/components/TypingStatus';
@@ -49,40 +49,40 @@ const MessagesContainer = styled.div`
 `;
 
 const Message = styled.div<{ $isSentByMe: boolean; theme: ThemeType }>`
-    position: relative;
-    max-width: 850px;
-    background-color: ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
-    color: ${props => props.theme.text.primary};
-    margin-left: ${props => (props.$isSentByMe ? 'auto' : 'unset')};
-    text-align: left;
-    border-radius: 20px;
-    padding: 8px;
-    margin-top: 8px;
-    z-index: 1;
-    &:before {
-        content: "";
-        position: absolute;
-        z-index: -1;
-        bottom: -2px;
-        ${props => (props.$isSentByMe ? 'right: -7px;' : 'left: -7px;')}
-        height: 20px;
-        border-${props => (props.$isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
-        border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
-        transform: translate(0, -2px);
-    }
+  position: relative;
+  max-width: 850px;
+  background-color: ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
+  color: ${props => props.theme.text.primary};
+  margin-left: ${props => (props.$isSentByMe ? 'auto' : 'unset')};
+  text-align: left;
+  border-radius: 20px;
+  padding: 8px;
+  margin-top: 8px;
+  z-index: 1;
+  &:before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    bottom: -2px;
+    ${props => (props.$isSentByMe ? 'right: -7px;' : 'left: -7px;')}
+    height: 20px;
+    border-${props => (props.$isSentByMe ? 'right' : 'left')}: 20px solid ${props => (props.$isSentByMe ? props.theme.background.messageUser : props.theme.background.messageAI)};
+    border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 16px 14px;
+    transform: translate(0, -2px);
+  }
 
-    &:after {
-        content: "";
-        position: absolute;
-        z-index: ${props => (props.$isSentByMe ? '1' : '3')};
-        bottom: -2px;
-        ${props => (props.$isSentByMe ? 'right: -56px;' : 'left: 4px;')}
-        width: 26px;
-        height: 20px;
-        background: ${props => props.theme.messageBubble.background};
-        border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 10px;
-        transform: ${props => (props.$isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
-    }
+  &:after {
+    content: "";
+    position: absolute;
+    z-index: ${props => (props.$isSentByMe ? '1' : '3')};
+    bottom: -2px;
+    ${props => (props.$isSentByMe ? 'right: -56px;' : 'left: 4px;')}
+    width: 26px;
+    height: 20px;
+    background: ${props => props.theme.messageBubble.background};
+    border-bottom-${props => (props.$isSentByMe ? 'left' : 'right')}-radius: 10px;
+    transform: ${props => (props.$isSentByMe ? 'translate(-30px, -2px);' : 'translate(-30px, -2px);')}
+  }
 `;
 
 const TypingIndicator = styled.div<{ theme: ThemeType }>`
@@ -174,6 +174,44 @@ const ShareButton = styled.button<{ theme: ThemeType }>`
   }
 `;
 
+const ScrollToBottomButton = styled.button<{
+  $show: boolean;
+  theme: ThemeType;
+}>`
+  position: absolute;
+  bottom: 125px;
+  left: 50%;
+  transform: translateX(-50%);
+  right: 30px;
+  width: 38px;
+  height: 38px;
+  background-color: ${props => props.theme.button.primary};
+  color: ${props => props.theme.text.white};
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: ${props => (props.$show ? '1' : '0')};
+  visibility: ${props => (props.$show ? 'visible' : 'hidden')};
+
+  &:hover {
+    background-color: ${props => props.theme.button.primaryHover};
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+`;
+
 const Cursor = styled.span`
   color: #9e9ea1;
   animation: pulse 0.8s ease-in-out infinite;
@@ -197,6 +235,7 @@ const ChatWindow = ({
 }: Props) => {
   const messagesContentRef = useRef<HTMLDivElement | null>(null);
   const [selectedQuestion, setSelectedQuestion] = useState<string>('');
+  const [showScrollButton, setShowScrollButton] = useState(false);
 
   useEffect(() => {
     setSelectedQuestion('');
@@ -205,6 +244,7 @@ const ChatWindow = ({
   const handleQuestionChange = (question: string) => {
     setSelectedQuestion(question);
   };
+
   const handleSendMessage = (message: string, search: boolean) => {
     if (!selectedChat) {
       createNewChat(message, search);
@@ -212,6 +252,34 @@ const ChatWindow = ({
       sendMessage(message, search);
     }
   };
+
+  const scrollToBottom = () => {
+    if (messagesContentRef.current) {
+      messagesContentRef.current.scrollTo({
+        top: messagesContentRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const handleScroll = () => {
+    if (messagesContentRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } =
+        messagesContentRef.current;
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
+      setShowScrollButton(distanceFromBottom > 50);
+    }
+  };
+
+  useEffect(() => {
+    const contentElement = messagesContentRef.current;
+    if (contentElement) {
+      contentElement.addEventListener('scroll', handleScroll);
+      return () => {
+        contentElement.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     if (messagesContentRef.current) {
@@ -255,6 +323,11 @@ const ChatWindow = ({
           <SuggestionScreen onQuestionSelect={handleQuestionChange} />
         )}
       </Content>
+      {selectedChat && (
+        <ScrollToBottomButton $show={showScrollButton} onClick={scrollToBottom}>
+          <ArrowDownIcon size={16} />
+        </ScrollToBottomButton>
+      )}
       <ChatInput
         onSendMessage={handleSendMessage}
         isLoading={loadingState.isLoading}
