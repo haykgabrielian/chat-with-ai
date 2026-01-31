@@ -11,6 +11,7 @@ type Props = {
   toggleSidebar: () => void;
   selectChat: (chat: Chat | null) => void;
   selectedChatId: string | null;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
 const HamburgerButton = styled.button<{ theme: ThemeType }>`
@@ -89,6 +90,7 @@ const SidebarMenu = ({
   toggleSidebar,
   selectChat,
   selectedChatId,
+  searchInputRef,
 }: Props) => {
   const handleCreateNewChat = () => {
     selectChat(null);
@@ -97,7 +99,7 @@ const SidebarMenu = ({
   const handleSearch = () => {
     if (!isOpen) toggleSidebar();
     window.setTimeout(() => {
-      document.getElementById('chat-search-input')?.focus();
+      searchInputRef?.current?.focus();
     }, 0);
   };
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 
 import { Chat } from '@/types/common';
@@ -50,6 +50,8 @@ const SidebarContainer = ({
   togglePin,
   toggleSidebar,
 }: Props) => {
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <>
       <Container $isOpen={isOpen}>
@@ -58,6 +60,7 @@ const SidebarContainer = ({
           toggleSidebar={toggleSidebar}
           selectChat={selectChat}
           selectedChatId={selectedChatId}
+          searchInputRef={searchInputRef}
         />
         <ChatList
           chats={chats}
@@ -65,6 +68,7 @@ const SidebarContainer = ({
           selectedChatId={selectedChatId}
           removeChat={removeChat}
           togglePin={togglePin}
+          searchInputRef={searchInputRef}
         />
       </Container>
       <Overlay onClick={toggleSidebar} $isOpen={isOpen} />

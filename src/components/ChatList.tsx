@@ -33,6 +33,7 @@ type Props = {
   selectChat: (chat: Chat | null) => void;
   removeChat: (chatId: string) => Promise<void>;
   togglePin: (chatId: string) => Promise<void>;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
 };
 
 const Container = styled.div<{ theme: ThemeType }>`
@@ -264,6 +265,7 @@ const ChatList = ({
   selectChat,
   removeChat,
   togglePin,
+  searchInputRef,
 }: Props) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -420,7 +422,7 @@ const ChatList = ({
             query={query}
             onChange={handleSearchChange}
             onClear={handleSearchClear}
-            inputId='chat-search-input'
+            inputRef={searchInputRef}
           />
         </Header>
         <ChatListContainer>
